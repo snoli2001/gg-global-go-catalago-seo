@@ -1,0 +1,204 @@
+@font-face {
+    font-family: "flaticon_mi_colección_de";
+    src: url("./flaticon_mi_colección_de.woff2?3e83803c6388e6b908c76cfba306ef6a") format("woff2"),
+url("./flaticon_mi_colección_de.woff?3e83803c6388e6b908c76cfba306ef6a") format("woff"),
+url("./flaticon_mi_colección_de.eot?3e83803c6388e6b908c76cfba306ef6a#iefix") format("embedded-opentype"),
+url("./flaticon_mi_colección_de.ttf?3e83803c6388e6b908c76cfba306ef6a") format("truetype"),
+url("./flaticon_mi_colección_de.svg?3e83803c6388e6b908c76cfba306ef6a#flaticon_mi_colección_de") format("svg")
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon_mi_colección_de !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.flaticon-piston:before {
+    content: "\f101";
+}
+.flaticon-motor-del-coche:before {
+    content: "\f102";
+}
+.flaticon-combustible:before {
+    content: "\f103";
+}
+.flaticon-tanque-de-aceite:before {
+    content: "\f104";
+}
+.flaticon-bajo-rendimiento:before {
+    content: "\f105";
+}
+.flaticon-caja-de-cambios:before {
+    content: "\f106";
+}
+.flaticon-caja-de-cambios-automatica:before {
+    content: "\f107";
+}
+.flaticon-radar-de-velocidad:before {
+    content: "\f108";
+}
+.flaticon-velocimetro:before {
+    content: "\f109";
+}
+.flaticon-velocimetro-1:before {
+    content: "\f10a";
+}
+.flaticon-freno:before {
+    content: "\f10b";
+}
+.flaticon-freno-de-disco:before {
+    content: "\f10c";
+}
+.flaticon-freno-1:before {
+    content: "\f10d";
+}
+.flaticon-suspension:before {
+    content: "\f10e";
+}
+.flaticon-suspension-del-auto:before {
+    content: "\f10f";
+}
+.flaticon-peso:before {
+    content: "\f110";
+}
+.flaticon-pesa-rusa:before {
+    content: "\f111";
+}
+.flaticon-expandir:before {
+    content: "\f112";
+}
+.flaticon-expansion:before {
+    content: "\f113";
+}
+.flaticon-moto:before {
+    content: "\f114";
+}
+.flaticon-motocicleta:before {
+    content: "\f115";
+}
+.flaticon-motocicleta-1:before {
+    content: "\f116";
+}
+.flaticon-moto-1:before {
+    content: "\f117";
+}
+.flaticon-casco:before {
+    content: "\f118";
+}
+.flaticon-motorcycle-1:before {
+    content: "\f119";
+}
+.flaticon-motorcycle-2:before {
+    content: "\f11a";
+}
+.flaticon-motorbike:before {
+    content: "\f11b";
+}
+.flaticon-motocross:before {
+    content: "\f11c";
+}
+.flaticon-bike:before {
+    content: "\f11d";
+}
+.flaticon-helmet:before {
+    content: "\f11e";
+}
+.flaticon-sportbike:before {
+    content: "\f11f";
+}
+.flaticon-motorcycle-3:before {
+    content: "\f120";
+}
+.flaticon-racer:before {
+    content: "\f121";
+}
+.flaticon-motorbike-1:before {
+    content: "\f122";
+}
+.flaticon-pistons:before {
+    content: "\f123";
+}
+.flaticon-jacket:before {
+    content: "\f124";
+}
+.flaticon-boots:before {
+    content: "\f125";
+}
+.flaticon-tricycle:before {
+    content: "\f126";
+}
+.flaticon-delivery-man:before {
+    content: "\f127";
+}
+.flaticon-wheel:before {
+    content: "\f128";
+}
+.flaticon-gloves:before {
+    content: "\f129";
+}
+.flaticon-motorbike-2:before {
+    content: "\f12a";
+}
+.flaticon-motor-bike:before {
+    content: "\f12b";
+}
+.flaticon-food-delivery:before {
+    content: "\f12c";
+}
+.flaticon-motorbike-3:before {
+    content: "\f12d";
+}
+.flaticon-motor-helmet:before {
+    content: "\f12e";
+}
+.flaticon-wheel-1:before {
+    content: "\f12f";
+}
+.flaticon-delivery-bike:before {
+    content: "\f130";
+}
+.flaticon-oil:before {
+    content: "\f131";
+}
+.flaticon-scooter:before {
+    content: "\f132";
+}
+.flaticon-motocross-1:before {
+    content: "\f133";
+}
+.flaticon-motorcycle-4:before {
+    content: "\f134";
+}
+.flaticon-gas-tank:before {
+    content: "\f135";
+}
+.flaticon-motorcycle:before {
+    content: "\f136";
+}
+.flaticon-motorcycle-5:before {
+    content: "\f137";
+}
+.flaticon-motorcycle-6:before {
+    content: "\f138";
+}
+.flaticon-motorcycle-7:before {
+    content: "\f139";
+}
+.flaticon-motorcycle-8:before {
+    content: "\f13a";
+}
+.flaticon-motorcycle-9:before {
+    content: "\f13b";
+}
+.flaticon-motorbike-4:before {
+    content: "\f13c";
+}
+.flaticon-motorbike-5:before {
+    content: "\f13d";
+}
+

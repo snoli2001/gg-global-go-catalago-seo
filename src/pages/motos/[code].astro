@@ -1,0 +1,122 @@
+---
+import type { Moto } from "../../types/moto.interface";
+import { motoService } from "../../services/api/moto.service";
+import Layout from "../../layouts/Layout.astro";
+import GalleryCarousel from "../../components/GalleryCarousel";
+import SpecsSection from "../../components/moto/specs/SpecsSection";
+import MotoHeader from "../../components/moto/MotoHeader.astro";
+import ColorSelector from "../../components/moto/ColorSelector.astro";
+import MobileDetails from "../../components/moto/MobileDetails.astro";
+import VideoSection from "../../components/moto/VideoSection.astro";
+import MotoScripts from "../../components/moto/MotoScripts.astro";
+
+// Generate static paths for all motorcycles
+export async function getStaticPaths() {
+  try {
+    const motos = await motoService.getMotos();
+    return motos.map((moto) => ({
+      params: { code: moto.code },
+      props: { moto },
+    }));
+  } catch (error) {
+    console.error("Error generating static paths:", error);
+    return [];
+  }
+}
+
+// Get the motorcycle data for this page
+const { moto } = Astro.props;
+
+// Format price with thousands separator
+const formatPrice = (price: number) => {
+  return price.toLocaleString("en-US", { maximumFractionDigits: 0 });
+};
+
+// Check if URL is a valid YouTube URL
+const isValidYouTubeUrl = (url: string) => {
+  const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  return pattern.test(url);
+};
+
+// Get video embed URL
+const getVideoEmbedUrl = (url: string) => {
+  const videoId = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  )?.[1];
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+};
+
+// Separate banner and gallery images
+const bannerImages = moto.carrusels.filter((carrusel) => carrusel.type === "B");
+const galleryImages = moto.carrusels.filter(
+  (carrusel) => carrusel.type === "G"
+);
+
+// Sort images by idCarrusel
+bannerImages.sort((a, b) => a.idCarrusel - b.idCarrusel);
+galleryImages.sort((a, b) => a.idCarrusel - b.idCarrusel);
+
+// Helper function for template
+const hasColorImage = (colorId: number) => {
+  return bannerImages.some((img) => img.color_id === colorId);
+};
+
+// Find the first color that has a banner image
+const initialColorId = moto.colores.find(color => hasColorImage(color.color_id))?.color_id || moto.colores[0].color_id;
+
+// Get the initial banner image
+const getInitialBannerImage = () => {
+  const selectedImage = bannerImages.find(img => img.color_id === initialColorId);
+  return selectedImage?.imagen || bannerImages[0]?.imagen || "/imgs/moto.png";
+};
+
+// Prepare data for client-side script
+const initialData = {
+  selectedColorId: initialColorId,
+  bannerImages,
+  galleryImages,
+  motoCode: moto.code,
+  financingUrl: import.meta.env.PUBLIC_FINANCING_URL,
+};
+---
+
+<Layout title={`${moto.marca} ${moto.modelo}`}>
+  <MotoScripts initialData={initialData} />
+
+  <MotoHeader
+    moto={moto}
+    bannerImages={bannerImages}
+    formatPrice={formatPrice}
+    initialImage={getInitialBannerImage()}
+  />
+
+  <ColorSelector colors={moto.colores} hasColorImage={hasColorImage} />
+
+  <MobileDetails moto={moto} formatPrice={formatPrice} />
+
+  <section class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-6">Especificaciones técnicas</h2>
+    <SpecsSection client:load moto={moto} />
+  </section>
+
+  {
+    galleryImages.length > 0 && (
+      <section class="px-4 bg-dark p-8 lg:px-24 max-w-screen-2xl mx-auto">
+        <h5 class="text-white text-xl lg:text-3xl font-semibold mb-4 lg:mb-8">
+          Galería de imágenes
+        </h5>
+        <GalleryCarousel
+          client:load
+          images={galleryImages}
+          modelName={`${moto.marca} ${moto.modelo}`}
+        />
+      </section>
+    )
+  }
+
+  <VideoSection
+    moto={moto}
+    isValidYouTubeUrl={isValidYouTubeUrl}
+    getVideoEmbedUrl={getVideoEmbedUrl}
+  />
+</Layout>

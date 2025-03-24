@@ -1,0 +1,269 @@
+$flaticon_mi_colección_de-font: "flaticon_mi_colección_de";
+
+@font-face {
+    font-family: $flaticon_mi_colección_de-font;
+    src: url("./flaticon_mi_colección_de.woff2?3e83803c6388e6b908c76cfba306ef6a") format("woff2"),
+url("./flaticon_mi_colección_de.woff?3e83803c6388e6b908c76cfba306ef6a") format("woff"),
+url("./flaticon_mi_colección_de.eot?3e83803c6388e6b908c76cfba306ef6a#iefix") format("embedded-opentype"),
+url("./flaticon_mi_colección_de.ttf?3e83803c6388e6b908c76cfba306ef6a") format("truetype"),
+url("./flaticon_mi_colección_de.svg?3e83803c6388e6b908c76cfba306ef6a#flaticon_mi_colección_de") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon_mi_colección_de !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+$flaticon_mi_colección_de-map: (
+    "piston": "\f101",
+    "motor-del-coche": "\f102",
+    "combustible": "\f103",
+    "tanque-de-aceite": "\f104",
+    "bajo-rendimiento": "\f105",
+    "caja-de-cambios": "\f106",
+    "caja-de-cambios-automatica": "\f107",
+    "radar-de-velocidad": "\f108",
+    "velocimetro": "\f109",
+    "velocimetro-1": "\f10a",
+    "freno": "\f10b",
+    "freno-de-disco": "\f10c",
+    "freno-1": "\f10d",
+    "suspension": "\f10e",
+    "suspension-del-auto": "\f10f",
+    "peso": "\f110",
+    "pesa-rusa": "\f111",
+    "expandir": "\f112",
+    "expansion": "\f113",
+    "moto": "\f114",
+    "motocicleta": "\f115",
+    "motocicleta-1": "\f116",
+    "moto-1": "\f117",
+    "casco": "\f118",
+    "motorcycle-1": "\f119",
+    "motorcycle-2": "\f11a",
+    "motorbike": "\f11b",
+    "motocross": "\f11c",
+    "bike": "\f11d",
+    "helmet": "\f11e",
+    "sportbike": "\f11f",
+    "motorcycle-3": "\f120",
+    "racer": "\f121",
+    "motorbike-1": "\f122",
+    "pistons": "\f123",
+    "jacket": "\f124",
+    "boots": "\f125",
+    "tricycle": "\f126",
+    "delivery-man": "\f127",
+    "wheel": "\f128",
+    "gloves": "\f129",
+    "motorbike-2": "\f12a",
+    "motor-bike": "\f12b",
+    "food-delivery": "\f12c",
+    "motorbike-3": "\f12d",
+    "motor-helmet": "\f12e",
+    "wheel-1": "\f12f",
+    "delivery-bike": "\f130",
+    "oil": "\f131",
+    "scooter": "\f132",
+    "motocross-1": "\f133",
+    "motorcycle-4": "\f134",
+    "gas-tank": "\f135",
+    "motorcycle": "\f136",
+    "motorcycle-5": "\f137",
+    "motorcycle-6": "\f138",
+    "motorcycle-7": "\f139",
+    "motorcycle-8": "\f13a",
+    "motorcycle-9": "\f13b",
+    "motorbike-4": "\f13c",
+    "motorbike-5": "\f13d",
+);
+
+.flaticon-piston:before {
+    content: map-get($flaticon_mi_colección_de-map, "piston");
+}
+.flaticon-motor-del-coche:before {
+    content: map-get($flaticon_mi_colección_de-map, "motor-del-coche");
+}
+.flaticon-combustible:before {
+    content: map-get($flaticon_mi_colección_de-map, "combustible");
+}
+.flaticon-tanque-de-aceite:before {
+    content: map-get($flaticon_mi_colección_de-map, "tanque-de-aceite");
+}
+.flaticon-bajo-rendimiento:before {
+    content: map-get($flaticon_mi_colección_de-map, "bajo-rendimiento");
+}
+.flaticon-caja-de-cambios:before {
+    content: map-get($flaticon_mi_colección_de-map, "caja-de-cambios");
+}
+.flaticon-caja-de-cambios-automatica:before {
+    content: map-get($flaticon_mi_colección_de-map, "caja-de-cambios-automatica");
+}
+.flaticon-radar-de-velocidad:before {
+    content: map-get($flaticon_mi_colección_de-map, "radar-de-velocidad");
+}
+.flaticon-velocimetro:before {
+    content: map-get($flaticon_mi_colección_de-map, "velocimetro");
+}
+.flaticon-velocimetro-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "velocimetro-1");
+}
+.flaticon-freno:before {
+    content: map-get($flaticon_mi_colección_de-map, "freno");
+}
+.flaticon-freno-de-disco:before {
+    content: map-get($flaticon_mi_colección_de-map, "freno-de-disco");
+}
+.flaticon-freno-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "freno-1");
+}
+.flaticon-suspension:before {
+    content: map-get($flaticon_mi_colección_de-map, "suspension");
+}
+.flaticon-suspension-del-auto:before {
+    content: map-get($flaticon_mi_colección_de-map, "suspension-del-auto");
+}
+.flaticon-peso:before {
+    content: map-get($flaticon_mi_colección_de-map, "peso");
+}
+.flaticon-pesa-rusa:before {
+    content: map-get($flaticon_mi_colección_de-map, "pesa-rusa");
+}
+.flaticon-expandir:before {
+    content: map-get($flaticon_mi_colección_de-map, "expandir");
+}
+.flaticon-expansion:before {
+    content: map-get($flaticon_mi_colección_de-map, "expansion");
+}
+.flaticon-moto:before {
+    content: map-get($flaticon_mi_colección_de-map, "moto");
+}
+.flaticon-motocicleta:before {
+    content: map-get($flaticon_mi_colección_de-map, "motocicleta");
+}
+.flaticon-motocicleta-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "motocicleta-1");
+}
+.flaticon-moto-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "moto-1");
+}
+.flaticon-casco:before {
+    content: map-get($flaticon_mi_colección_de-map, "casco");
+}
+.flaticon-motorcycle-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-1");
+}
+.flaticon-motorcycle-2:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-2");
+}
+.flaticon-motorbike:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorbike");
+}
+.flaticon-motocross:before {
+    content: map-get($flaticon_mi_colección_de-map, "motocross");
+}
+.flaticon-bike:before {
+    content: map-get($flaticon_mi_colección_de-map, "bike");
+}
+.flaticon-helmet:before {
+    content: map-get($flaticon_mi_colección_de-map, "helmet");
+}
+.flaticon-sportbike:before {
+    content: map-get($flaticon_mi_colección_de-map, "sportbike");
+}
+.flaticon-motorcycle-3:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-3");
+}
+.flaticon-racer:before {
+    content: map-get($flaticon_mi_colección_de-map, "racer");
+}
+.flaticon-motorbike-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorbike-1");
+}
+.flaticon-pistons:before {
+    content: map-get($flaticon_mi_colección_de-map, "pistons");
+}
+.flaticon-jacket:before {
+    content: map-get($flaticon_mi_colección_de-map, "jacket");
+}
+.flaticon-boots:before {
+    content: map-get($flaticon_mi_colección_de-map, "boots");
+}
+.flaticon-tricycle:before {
+    content: map-get($flaticon_mi_colección_de-map, "tricycle");
+}
+.flaticon-delivery-man:before {
+    content: map-get($flaticon_mi_colección_de-map, "delivery-man");
+}
+.flaticon-wheel:before {
+    content: map-get($flaticon_mi_colección_de-map, "wheel");
+}
+.flaticon-gloves:before {
+    content: map-get($flaticon_mi_colección_de-map, "gloves");
+}
+.flaticon-motorbike-2:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorbike-2");
+}
+.flaticon-motor-bike:before {
+    content: map-get($flaticon_mi_colección_de-map, "motor-bike");
+}
+.flaticon-food-delivery:before {
+    content: map-get($flaticon_mi_colección_de-map, "food-delivery");
+}
+.flaticon-motorbike-3:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorbike-3");
+}
+.flaticon-motor-helmet:before {
+    content: map-get($flaticon_mi_colección_de-map, "motor-helmet");
+}
+.flaticon-wheel-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "wheel-1");
+}
+.flaticon-delivery-bike:before {
+    content: map-get($flaticon_mi_colección_de-map, "delivery-bike");
+}
+.flaticon-oil:before {
+    content: map-get($flaticon_mi_colección_de-map, "oil");
+}
+.flaticon-scooter:before {
+    content: map-get($flaticon_mi_colección_de-map, "scooter");
+}
+.flaticon-motocross-1:before {
+    content: map-get($flaticon_mi_colección_de-map, "motocross-1");
+}
+.flaticon-motorcycle-4:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-4");
+}
+.flaticon-gas-tank:before {
+    content: map-get($flaticon_mi_colección_de-map, "gas-tank");
+}
+.flaticon-motorcycle:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle");
+}
+.flaticon-motorcycle-5:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-5");
+}
+.flaticon-motorcycle-6:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-6");
+}
+.flaticon-motorcycle-7:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-7");
+}
+.flaticon-motorcycle-8:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-8");
+}
+.flaticon-motorcycle-9:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorcycle-9");
+}
+.flaticon-motorbike-4:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorbike-4");
+}
+.flaticon-motorbike-5:before {
+    content: map-get($flaticon_mi_colección_de-map, "motorbike-5");
+}

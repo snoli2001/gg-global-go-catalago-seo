@@ -1,0 +1,92 @@
+---
+import type { Moto } from "../../types/moto.interface";
+
+interface Props {
+  moto: Moto;
+  bannerImages: any[];
+  formatPrice: (price: number) => string;
+  initialImage: string;
+}
+
+const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
+---
+
+<header class="w-full relative max-w-screen-2xl mx-auto">
+  <div
+    class="w-full h-80 lg:h-[526px] items-center flex justify-center md:justify-between md:px-12 lg:px-12 xl:px-24"
+  >
+    <section
+      class="z-10 h-full flex flex-col justify-center gap-4 lg:max-w-[370px]"
+    >
+      <div class="flex flex-col">
+        <h2
+          class={`${moto.modelo.length > 18 ? "text-xl lg:text-3xl" : "text-3xl lg:text-4xl"} font-semibold text-white hidden md:block`}
+        >
+          {moto.modelo}
+        </h2>
+        <strong class="text-2xl hidden lg:block font-medium text-gg-blue-100">
+          {moto.currency.toLowerCase() === "sol" ? "S/" : "$"}
+          {
+            moto.currency.toLowerCase() === "sol"
+              ? formatPrice(moto.precio)
+              : formatPrice(moto.price_dollar)
+          }
+        </strong>
+        {
+          moto.currency.toLowerCase() === "dolar" && (
+            <>
+              <span class="text-xs hidden lg:block text-gg-blue-100">
+                T.C. Referencial: S/ 3.82
+              </span>
+              <span class="text-sm hidden lg:block text-gg-blue-100 font-medium">
+                Precio en soles: S/ {formatPrice(moto.precio)}
+              </span>
+            </>
+          )
+        }
+      </div>
+      <p class="text-sm text-white hidden lg:block w-full text-pretty">
+        {moto.texto}
+      </p>
+      <section class="w-full lg:block hidden">
+        <button
+          onclick="redirectToFinancing()"
+          class="cursor-pointer inline-block px-6 py-3 bg-gg-blue-500 text-white rounded-lg hover:bg-gg-blue-600 transition-colors w-full"
+        >
+          Financiar moto
+        </button>
+      </section>
+    </section>
+
+    <img
+      id="moto-image"
+      src={initialImage}
+      alt={`${moto.marca} ${moto.modelo}`}
+      class="h-56 w-auto relative mix-blend-multiply z-10 lg:h-80 xl:h-[420px] moto-image-transition"
+      fetchpriority="high"
+    />
+    <img
+      src="/imgs/moto-detail-background-desktop.jpg"
+      alt="Global Go Background"
+      class="absolute top-0 left-0 w-full h-full hidden md:block lg:hidden xl:block"
+      loading="lazy"
+    />
+    <img
+      src="/imgs/moto-detail-background-desktop-lg.jpg"
+      alt="Global Go Background"
+      class="absolute top-0 left-0 w-full h-full hidden lg:block xl:hidden"
+      loading="lazy"
+    />
+  </div>
+
+  <img
+    src={moto.logo}
+    alt={`Logo ${moto.marca}`}
+    class="absolute top-5 right-5 w-20 h-20 md:hidden"
+    loading="lazy"
+  />
+  <div class="absolute top-5 left-12 hidden md:block xl:left-24">
+    <img src={moto.logo} alt={`Logo ${moto.marca}`} class="w-20 h-20" />
+  </div>
+</header>
+

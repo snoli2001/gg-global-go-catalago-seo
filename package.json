@@ -6,9 +6,23 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "build:prod": "cross-env NODE_ENV=production astro build",
+    "build:dev": "cross-env NODE_ENV=development astro build",
+    "start:prod": "cross-env NODE_ENV=production astro preview",
+    "start:dev": "cross-env NODE_ENV=development astro preview"
   },
   "dependencies": {
-    "astro": "^5.5.4"
+    "@astrojs/react": "^4.2.1",
+    "@tailwindcss/vite": "^4.0.15",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "astro": "^5.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.15"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

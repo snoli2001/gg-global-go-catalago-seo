@@ -1,0 +1,10 @@
+---
+import { motoService } from "../services/api/moto.service";
+import type { Moto } from "../types/moto.interface";
+import MotoListReact from "./MotoListReact";
+
+// Fetch motorcycles at build time
+const motos: Moto[] = await motoService.getMotos();
+---
+
+<MotoListReact client:load motos={motos} />

@@ -1,0 +1,166 @@
+---
+interface Props {
+  initialData: {
+    selectedColorId: number;
+    bannerImages: any[];
+    galleryImages: any[];
+    motoCode: string;
+    financingUrl: string;
+  };
+}
+
+const { initialData } = Astro.props;
+---
+
+<script define:vars={{ initialData }}>
+  // Client-side state
+  let selectedColorId = initialData.selectedColorId;
+  const bannerImages = initialData.bannerImages;
+  const galleryImages = initialData.galleryImages;
+  const motoCode = initialData.motoCode;
+  const financingUrl = initialData.financingUrl;
+
+  // Check if color has associated images
+  function hasColorImage(colorId) {
+    return bannerImages.some((img) => img.color_id === colorId);
+  }
+
+  // Handle color selection
+  window.onColorSelect = function (colorId) {
+    if (hasColorImage(colorId)) {
+      selectedColorId = colorId;
+      const motoImage = document.querySelector("#moto-image");
+      if (motoImage) {
+        // Add fade out effect
+        motoImage.classList.add("moto-image-fade");
+
+        // Wait for fade out to complete before changing image
+        setTimeout(() => {
+          const newImageSrc = getBannerImage();
+          const newImage = new Image();
+          newImage.src = newImageSrc;
+          
+          newImage.onload = () => {
+            motoImage.src = newImageSrc;
+            // Remove fade out effect after image loads
+            motoImage.classList.remove("moto-image-fade");
+          };
+        }, 500); // Increased duration for better visibility
+      }
+
+      // Update color button styles
+      updateColorButtonStyles(colorId);
+    }
+  };
+
+  // Update color button styles
+  function updateColorButtonStyles(selectedColorId) {
+    const colorButtons = document.querySelectorAll(".color-select-btn");
+    colorButtons.forEach((button) => {
+      const buttonColorId = parseInt(button.getAttribute("data-color-id") || "0");
+      if (buttonColorId === selectedColorId) {
+        button.classList.add("color-selected");
+        button.classList.add("ring-2", "ring-offset-2", "ring-blue-700");
+      } else {
+        button.classList.remove("color-selected");
+        button.classList.remove("ring-2", "ring-offset-2", "ring-blue-700");
+      }
+    });
+  }
+
+  // Get banner image based on selected color
+  function getBannerImage() {
+    if (!selectedColorId || !bannerImages.length) {
+      return bannerImages[0]?.imagen || "/imgs/moto.png";
+    }
+
+    const selectedImage = bannerImages.find(
+      (img) => img.color_id === selectedColorId
+    );
+    return selectedImage
+      ? selectedImage.imagen
+      : bannerImages[0]?.imagen || "/imgs/moto.png";
+  }
+
+  // Handle financing redirect
+  window.redirectToFinancing = function () {
+    const baseUrl = `${financingUrl}?codigoMoto=${motoCode}_${selectedColorId}`;
+
+    try {
+      if (window !== window.parent) {
+        window.parent.location.href = baseUrl;
+      } else {
+        window.location.href = baseUrl;
+      }
+    } catch (e) {
+      console.warn(
+        "No se pudo acceder a la ventana padre. Redirigiendo en la ventana actual."
+      );
+      window.location.href = baseUrl;
+    }
+  };
+
+  // Preload images
+  function preloadImages() {
+    const mainImage = new Image();
+    mainImage.src = getBannerImage();
+
+    bannerImages.forEach((image) => {
+      if (image.color_id !== selectedColorId) {
+        const img = new Image();
+        img.src = image.imagen;
+      }
+    });
+  }
+
+  // Initialize
+  document.addEventListener("DOMContentLoaded", () => {
+    preloadImages();
+    updateColorButtonStyles(selectedColorId);
+  });
+</script>
+
+<style>
+  .moto-image-transition {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .moto-image-fade {
+    opacity: 0;
+  }
+
+  .color-select-btn {
+    position: relative;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .color-select-btn.color-selected {
+    transform: scale(1.1);
+  }
+
+  .color-select-btn.color-selected::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 2px solid #1e40af;
+    border-radius: 50%;
+    z-index: -1;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style> 

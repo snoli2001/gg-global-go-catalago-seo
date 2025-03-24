@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap");
+@import "../assets/icons/flaticon_mi_colección_de.css";
+@import "tailwindcss";
+
+html {
+  font-family: var(--font-display);
+  button {
+    cursor: pointer;
+  }
+}
+
+@theme {
+  --font-display: "Roboto", "sans-serif";
+
+  /* BLUE */
+  --color-gg-blue-50: #f1f7fe;
+  --color-gg-blue-100: #e3eefb;
+  --color-gg-blue-200: #c1dcf6;
+  --color-gg-blue-300: #89c0f0;
+  --color-gg-blue-400: #4ba0e5;
+  --color-gg-blue-500: #2484d3;
+  --color-gg-blue-600: #1567b4;
+  --color-gg-blue-700: #135495;
+  --color-gg-blue-800: #134679;
+  --color-gg-blue-900: #163c64;
+  --color-gg-blue-950: #0e2643;
+
+  /* RED */
+  --color-gg-red-50: #fff1f1;
+  --color-gg-red-100: #ffdfdf;
+  --color-gg-red-200: #ffc4c4;
+  --color-gg-red-300: #ff9c9c;
+  --color-gg-red-400: #ff6363;
+  --color-gg-red-500: #ff3232;
+  --color-gg-red-600: #ef1313;
+  --color-gg-red-700: #c50b0b;
+  --color-gg-red-800: #a60e0e;
+  --color-gg-red-900: #891313;
+  --color-gg-red-950: #4b0404;
+
+  /* GRAY */
+  --color-stroke: #dfe4ea;
+  --color-dark: #111928;
+  --color-secondary-text: #8899a8;
+  --color-primary-text: #637381;
+  --color-bg-light: #f9fafb;
+}
