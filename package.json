@@ -9,7 +9,7 @@
     "astro": "astro",
     "build:prod": "cross-env NODE_ENV=production astro build",
     "build:dev": "cross-env NODE_ENV=development astro build",
-    "start:prod": "cross-env NODE_ENV=production astro preview",
+    "start:prod": "node ./dist/server/entry.mjs",
     "start:dev": "cross-env NODE_ENV=development astro preview"
   },
   "dependencies": {

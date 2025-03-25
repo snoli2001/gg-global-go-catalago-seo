@@ -5,40 +5,6 @@ import { useState, useRef, useEffect } from 'react';
 import { m as motoService, $ as $$Layout } from '../chunks/Layout_Drj1S_Dx.mjs';
 export { renderers } from '../renderers.mjs';
 
-class BrandsService {
-  apiUrl = "https://globalgo-api.sis360.com.pe/api/Catalog";
-  async getBrands() {
-    try {
-      const response = await fetch(`${this.apiUrl}/getBrands`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch brands");
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching brands:", error);
-      return [];
-    }
-  }
-}
-const brandsService = new BrandsService();
-
-class CategoriesService {
-  apiUrl = "https://globalgo-api.sis360.com.pe/api/Catalog";
-  async getCategories() {
-    try {
-      const response = await fetch(`${this.apiUrl}/GetCategories`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      return [];
-    }
-  }
-}
-const categoriesService = new CategoriesService();
-
 function Select({ options, value, onChange, placeholder = "Selecciona una opción", className = "" }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
@@ -600,7 +566,11 @@ function SearchBar({
   ] }) });
 }
 
-function MotoListReact({ initialBrands, initialCategories, initialMotos }) {
+function MotoListReact({
+  initialBrands,
+  initialCategories,
+  initialMotos
+}) {
   const [brands] = useState(initialBrands);
   const [categories] = useState(initialCategories);
   const [motos] = useState(initialMotos);
@@ -1121,15 +1091,73 @@ function MotoListReact({ initialBrands, initialCategories, initialMotos }) {
   ] });
 }
 
+class BrandsService {
+  apiUrl = "https://globalgo-api.sis360.com.pe/api/Catalog";
+  async getBrands() {
+    try {
+      if (!this.apiUrl) {
+        console.error("PUBLIC_API_URL is not defined");
+        throw new Error("API URL is not configured");
+      }
+      console.log("Fetching brands from:", `${this.apiUrl}/getBrands`);
+      const response = await fetch(`${this.apiUrl}/getBrands`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Failed to fetch brands:", {
+          status: response.status,
+          statusText: response.statusText,
+          errorText
+        });
+        throw new Error(`Failed to fetch brands: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log("Brands fetched successfully:", data.length);
+      return data;
+    } catch (error) {
+      console.error("Error in getBrands:", error);
+      throw error;
+    }
+  }
+}
+const brandsService = new BrandsService();
+
+class CategoriesService {
+  apiUrl = "https://globalgo-api.sis360.com.pe/api/Catalog";
+  async getCategories() {
+    try {
+      const response = await fetch(`${this.apiUrl}/GetCategories`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [];
+    }
+  }
+}
+const categoriesService = new CategoriesService();
+
+const prerender = false;
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {
-  const [brands, categories, motos] = await Promise.all([
-    brandsService.getBrands(),
-    categoriesService.getCategories(),
-    motoService.getMotos()
-  ]);
+  console.log("API URL:", "https://globalgo-api.sis360.com.pe/api/Catalog");
+  let brands = [];
+  let categories = [];
+  let motos = [];
+  try {
+    [brands, categories, motos] = await Promise.all([
+      brandsService.getBrands(),
+      categoriesService.getCategories(),
+      motoService.getMotos()
+    ]);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    brands = [];
+    categories = [];
+    motos = [];
+  }
   return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Catalogo de motos | Global Go" }, { "default": async ($$result2) => renderTemplate` ${renderComponent($$result2, "MotoListReact", MotoListReact, { "client:load": true, "initialBrands": brands, "initialCategories": categories, "initialMotos": motos, "client:component-hydration": "load", "client:component-path": "C:/PERSONAL/work/Freelance/GLOBAL_GO/Dev/gg-catalogo-motos-astro/src/components/MotoListReact", "client:component-export": "default" })} ` })}`;
 }, "C:/PERSONAL/work/Freelance/GLOBAL_GO/Dev/gg-catalogo-motos-astro/src/pages/index.astro", void 0);
-
 const $$file = "C:/PERSONAL/work/Freelance/GLOBAL_GO/Dev/gg-catalogo-motos-astro/src/pages/index.astro";
 const $$url = "";
 
@@ -1137,6 +1165,7 @@ const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: $$Index,
   file: $$file,
+  prerender,
   url: $$url
 }, Symbol.toStringTag, { value: 'Module' }));
 

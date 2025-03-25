@@ -8,7 +8,7 @@ import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
 
-export const prerender = false; // Esto habilita SSR para esta página
+export const prerender = true; // Esto habilita SSR para esta página
 
 // Verificar que tenemos la variable de entorno
 console.log('API URL:', import.meta.env.PUBLIC_API_URL);
@@ -24,6 +24,11 @@ try {
     categoriesService.getCategories(),
     motoService.getMotos(),
   ]);
+  console.log('Data fetched successfully:', {
+    brands: brands.length,
+    categories: categories.length,
+    motos: motos.length
+  });
 } catch (error) {
   console.error('Error fetching data:', error);
   // Proporcionar datos vacíos en caso de error
