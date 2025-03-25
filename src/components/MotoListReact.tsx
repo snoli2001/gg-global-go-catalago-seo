@@ -440,7 +440,7 @@ export default function MotoListReact({
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Botón de filtros para móvil */}
         <div className="lg:hidden flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Catálogo de Motos</h2>
+          <h2 className="text-xl font-semimedium">Catálogo de Motos</h2>
           <button
             onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
             className="flex items-center gap-2 px-4 py-2 bg-gg-blue-700 text-white rounded-lg hover:bg-gg-blue-800 transition-colors"
@@ -478,7 +478,7 @@ export default function MotoListReact({
           <div className="h-full overflow-y-auto">
             {/* Header móvil */}
             <div className="lg:hidden flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold">Filtros</h3>
+              <h3 className="text-lg font-semimedium">Filtros</h3>
               <button
                 onClick={() => setIsFilterPanelOpen(false)}
                 className="p-2 hover:bg-gray-100 rounded-full"
@@ -545,7 +545,7 @@ export default function MotoListReact({
 
                 {/* Precio */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-normal mb-2">Precio</h4>
+                  <h4 className="text-lg font-medium mb-2">Precio</h4>
                   <div className="flex gap-2 mb-2">
                     <Input
                       type="number"
@@ -589,14 +589,13 @@ export default function MotoListReact({
 
                 {/* Marcas */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-normal mb-2">Marcas</h4>
+                  <h4 className="text-lg font-medium mb-2">Marcas</h4>
                   <div className="space-y-1 space-x-1">
                     {brands.map((brand) => (
                       <Chip
                         key={brand.idMarca}
                         label={brand.marca.toLocaleUpperCase()}
                         value={brand.marca}
-                        image={brand.logo}
                         isSelected={filters.brands.includes(brand.marca)}
                         onClick={() => handleBrandToggle(brand.marca)}
                       />
@@ -606,7 +605,7 @@ export default function MotoListReact({
 
                 {/* Transmisión */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-normal mb-2">Transmisión</h4>
+                  <h4 className="text-lg font-medium mb-2">Transmisión</h4>
                   <div className="flex flex-wrap gap-2">
                     {["Mecánica", "Automática", "Semiautomática"].map(
                       (type) => (
@@ -624,7 +623,7 @@ export default function MotoListReact({
 
                 {/* Categoría */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-normal mb-2">Categoría</h4>
+                  <h4 className="text-lg font-medium mb-2">Categoría</h4>
                   <div className="flex flex-wrap gap-2">
                     {categories.map((category) => (
                       <Chip
@@ -642,7 +641,7 @@ export default function MotoListReact({
 
                 {/* Cilindrada */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-normal mb-2">Cilindrada</h4>
+                  <h4 className="text-lg font-medium mb-2">Cilindrada</h4>
                   <div className="flex gap-2 mb-2">
                     <Input
                       type="number"
@@ -684,7 +683,7 @@ export default function MotoListReact({
 
                 {/* Rendimiento */}
                 <div className="mb-32">
-                  <h4 className="text-sm font-normal mb-2">Rendimiento</h4>
+                  <h4 className="text-lg font-medium mb-2">Rendimiento</h4>
                   <div className="flex gap-2 mb-2">
                     <Input
                       type="number"
@@ -775,7 +774,7 @@ export default function MotoListReact({
                   d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
                 />
               </svg>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semimedium text-gray-900 mb-2">
                 No se encontraron motos
               </h3>
               <p className="text-gray-500 max-w-sm">
