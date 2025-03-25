@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { bannersService } from "../../services/api/banners.service";
 
 interface Banner {
   url: string;
@@ -7,18 +6,13 @@ interface Banner {
   description: string;
 }
 
-export default function BannerCarousel() {
+interface BannerCarouselProps {
+  banners: Banner[];
+}
+
+export default function BannerCarousel({ banners }: BannerCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [banners, setBanners] = useState<Banner[]>([]);
-
-  useEffect(() => {
-    const fetchBanners = async () => {
-      const data = await bannersService.getBanners();
-      setBanners(data);
-    };
-    fetchBanners();
-  }, []);
 
   useEffect(() => {
     if (!isPaused && banners.length > 0) {
@@ -48,14 +42,14 @@ export default function BannerCarousel() {
 
   return (
     <div
-      className="relative w-full h-[200px] md:h-[300px] overflow-hidden rounded-lg mb-6"
+      className="relative w-full h-[250px] md:h-[300px] overflow-hidden md:rounded-lg"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Flechas de navegación */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
+        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +57,7 @@ export default function BannerCarousel() {
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-5 h-5 md:w-6 md:h-6"
         >
           <path
             strokeLinecap="round"
@@ -74,7 +68,7 @@ export default function BannerCarousel() {
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
+        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +76,7 @@ export default function BannerCarousel() {
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-5 h-5 md:w-6 md:h-6"
         >
           <path
             strokeLinecap="round"
@@ -101,34 +95,52 @@ export default function BannerCarousel() {
           <a
             key={banner.code}
             href={`/motos/${banner.code}`}
-            className="w-full h-full flex-shrink-0"
+            className="w-full h-full flex-shrink-0 relative"
           >
             <img
               src={banner.url}
               alt={banner.description}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-fill lg:object-cover"
             />
           </a>
         ))}
       </div>
 
       {/* Indicadores */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2">
         {banners.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === currentSlide ? "bg-white w-4" : "bg-white/50"
+            className={`relative w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all overflow-hidden ${
+              index === currentSlide ? "w-6 md:w-8" : ""
             }`}
-          />
+          >
+            <div
+              className={`absolute inset-0 rounded-full transition-all duration-300 ${
+                index === currentSlide ? "bg-white" : "bg-white/80"
+              }`}
+            />
+            {index === currentSlide && !isPaused && (
+              <div
+                className="absolute inset-0 rounded-full bg-white/30"
+                style={{
+                  animation: "bulletProgress 5000ms linear infinite",
+                  transformOrigin: "left",
+                  willChange: "transform",
+                }}
+              >
+                <div className="absolute inset-0 bg-gg-blue-500" />
+              </div>
+            )}
+          </button>
         ))}
       </div>
 
       {/* Botón de pausa */}
       <button
         onClick={() => setIsPaused(!isPaused)}
-        className="absolute bottom-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
+        className="absolute bottom-4 right-2 md:right-4 p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
       >
         {isPaused ? (
           <svg
@@ -137,7 +149,7 @@ export default function BannerCarousel() {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-4 h-4"
+            className="w-3 h-3 md:w-4 md:h-4"
           >
             <path
               strokeLinecap="round"
@@ -152,7 +164,7 @@ export default function BannerCarousel() {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-4 h-4"
+            className="w-3 h-3 md:w-4 md:h-4"
           >
             <path
               strokeLinecap="round"
@@ -164,4 +176,23 @@ export default function BannerCarousel() {
       </button>
     </div>
   );
+}
+
+// Add keyframes for the bullet progress animation
+const keyframes = `
+@keyframes bulletProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+`;
+
+// Add the keyframes to the document
+if (typeof document !== "undefined") {
+  const style = document.createElement("style");
+  style.innerHTML = keyframes;
+  document.head.appendChild(style);
 }

@@ -23,16 +23,23 @@ interface MotoListReactProps {
   initialBrands: Brand[];
   initialCategories: Category[];
   initialMotos: Moto[];
+  initialBanners: {
+    url: string;
+    code: string;
+    description: string;
+  }[];
 }
 
 export default function MotoListReact({
   initialBrands,
   initialCategories,
   initialMotos,
+  initialBanners,
 }: MotoListReactProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
   const [motos] = useState<Moto[]>(initialMotos);
+  const [banners] = useState(initialBanners);
   const [filteredMotos, setFilteredMotos] = useState<Moto[]>(initialMotos);
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -288,9 +295,11 @@ export default function MotoListReact({
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4 lg:p-6 mx-auto max-w-screen-2xl">
-      {/* Banner Carousel */}
-      <BannerCarousel />
+    <div className="flex flex-col gap-6 px-4 pb-4 pt-0 lg:p-6 mx-auto max-w-screen-2xl">
+      {/* Banner Container - Eliminamos padding en móvil */}
+      <div className="-mx-4 lg:mx-0">
+        <BannerCarousel banners={banners} />
+      </div>
 
       {/* Search Bar */}
       <SearchBar motos={motos} />

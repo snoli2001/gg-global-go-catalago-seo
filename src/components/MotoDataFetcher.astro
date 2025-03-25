@@ -3,6 +3,7 @@ import MotoListReact from "./MotoListReact";
 import { brandsService } from "../services/api/brands.service";
 import { categoriesService } from "../services/api/categories.service";
 import { motoService } from "../services/api/moto.service";
+import { bannersService } from "../services/api/banners.service";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
@@ -14,6 +15,7 @@ console.log("📌 API URL:", import.meta.env.PUBLIC_API_URL);
 let brands: Brand[] = [];
 let categories: Category[] = [];
 let motos: Moto[] = [];
+let banners: any[] = [];
 
 try {
   console.log("🔄 Iniciando fetch de datos...");
@@ -45,16 +47,27 @@ try {
     motos = [];
   }
 
+  // Fetch banners
+  try {
+    banners = await bannersService.getBanners();
+    console.log("✅ Banners obtenidos:", banners.length);
+  } catch (error) {
+    console.error("❌ Error obteniendo banners:", error);
+    banners = [];
+  }
+
   console.log("✅ Datos totales obtenidos:", {
     brands: brands.length,
     categories: categories.length,
     motos: motos.length,
+    banners: banners.length,
   });
 } catch (error) {
   console.error("❌ Error general en el fetch de datos:", error);
   brands = [];
   categories = [];
   motos = [];
+  banners = [];
 }
 ---
 
@@ -63,4 +76,5 @@ try {
   initialBrands={brands}
   initialCategories={categories}
   initialMotos={motos}
+  initialBanners={banners}
 />
