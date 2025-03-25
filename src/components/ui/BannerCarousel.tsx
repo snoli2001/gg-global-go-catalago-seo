@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Image } from "astro:assets";
 
 interface Banner {
   url: string;
@@ -13,27 +14,53 @@ interface BannerCarouselProps {
 export default function BannerCarousel({ banners }: BannerCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0]));
+
+  // Preload initial images
+  useEffect(() => {
+    // Preload first 3 images or all if less than 3
+    const initialImages = new Set<number>();
+    for (let i = 0; i < Math.min(3, banners.length); i++) {
+      initialImages.add(i);
+    }
+    setLoadedImages(initialImages);
+
+    // Preload the rest of the images
+    const preloadImages = async () => {
+      for (let i = 3; i < banners.length; i++) {
+        const img = new window.Image();
+        img.src = banners[i].url;
+        img.onload = () => {
+          setLoadedImages(prev => new Set([...prev, i]));
+        };
+      }
+    };
+    preloadImages();
+  }, [banners]);
 
   useEffect(() => {
     if (!isPaused && banners.length > 0) {
       const timer = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % banners.length);
+        const nextIndex = (currentSlide + 1) % banners.length;
+        setCurrentSlide(nextIndex);
       }, 5000);
 
       return () => clearInterval(timer);
     }
-  }, [isPaused, banners.length]);
+  }, [isPaused, banners.length, currentSlide]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % banners.length);
+    const nextIndex = (currentSlide + 1) % banners.length;
+    setCurrentSlide(nextIndex);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+    const prevIndex = (currentSlide - 1 + banners.length) % banners.length;
+    setCurrentSlide(prevIndex);
   };
 
   if (banners.length === 0) {
@@ -46,7 +73,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Flechas de navegación */}
+      {/* Navigation arrows */}
       <button
         onClick={prevSlide}
         className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"
@@ -91,22 +118,29 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
         className="flex transition-transform duration-500 ease-out h-full"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
-        {banners.map((banner) => (
+        {banners.map((banner, index) => (
           <a
             key={banner.code}
             href={`/motos/${banner.code}`}
-            className="w-full h-full flex-shrink-0 relative"
+            className="w-full h-full flex-shrink-0 relative bg-gray-100"
           >
-            <img
-              src={banner.url}
-              alt={banner.description}
-              className="w-full h-full object-fill lg:object-cover"
-            />
+            {loadedImages.has(index) ? (
+              <img
+                src={banner.url}
+                alt={banner.description}
+                className="w-full h-full object-fill lg:object-cover"
+                style={{ opacity: 1, transition: 'opacity 0.3s ease-in-out' }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gg-blue-500"></div>
+              </div>
+            )}
           </a>
         ))}
       </div>
 
-      {/* Indicadores */}
+      {/* Indicators */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2">
         {banners.map((_, index) => (
           <button
@@ -137,7 +171,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
         ))}
       </div>
 
-      {/* Botón de pausa */}
+      {/* Pause button */}
       <button
         onClick={() => setIsPaused(!isPaused)}
         className="absolute bottom-4 right-2 md:right-4 p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all"

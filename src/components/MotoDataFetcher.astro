@@ -8,59 +8,63 @@ import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
 
-
+// Fetch critical data first
 let brands: Brand[] = [];
 let categories: Category[] = [];
-let motos: Moto[] = [];
 let banners: any[] = [];
 
 try {
+  // Fetch critical data in parallel
+  const [brandsData, categoriesData, bannersData] = await Promise.all([
+    brandsService.getBrands(),
+    categoriesService.getCategories(),
+    bannersService.getBanners()
+  ]);
 
-  // Fetch brands
-  try {
-    brands = await brandsService.getBrands();
-  } catch (error) {
-    console.error("❌ Error obteniendo brands:", error);
-    brands = [];
-  }
-
-  // Fetch categories
-  try {
-    categories = await categoriesService.getCategories();
-  } catch (error) {
-    console.error("❌ Error obteniendo categories:", error);
-    categories = [];
-  }
-
-  // Fetch motos
-  try {
-    motos = await motoService.getMotos();
-  } catch (error) {
-    console.error("❌ Error obteniendo motos:", error);
-    motos = [];
-  }
-
-  // Fetch banners
-  try {
-    banners = await bannersService.getBanners();
-  } catch (error) {
-    console.error("❌ Error obteniendo banners:", error);
-    banners = [];
-  }
-  
+  brands = brandsData;
+  categories = categoriesData;
+  banners = bannersData;
 } catch (error) {
-  console.error("❌ Error general en el fetch de datos:", error);
+  console.error("❌ Error fetching critical data:", error);
   brands = [];
   categories = [];
-  motos = [];
   banners = [];
 }
+
+// Initialize motos as empty array
+let motos: Moto[] = [];
+
+// Fetch motos in the background after component mounts
+let motosPromise = motoService.getMotos().catch(error => {
+  console.error("❌ Error obteniendo motos:", error);
+  return [];
+});
 ---
 
 <MotoListReact
   client:load
   initialBrands={brands}
   initialCategories={categories}
-  initialMotos={motos}
+  initialMotos={[]}
   initialBanners={banners}
 />
+
+<script>
+  // Hydrate motos data when it's ready
+  import { motoService } from "../services/api/moto.service";
+
+  async function hydrateMotos() {
+    try {
+      const motos = await motoService.getMotos();
+      window.dispatchEvent(new CustomEvent('motosLoaded', { detail: motos }));
+    } catch (error) {
+      console.error("❌ Error loading motos:", error);
+      window.dispatchEvent(new CustomEvent('motosLoaded', { detail: [] }));
+    }
+  }
+
+  // Start loading motos after initial render
+  requestIdleCallback(() => {
+    hydrateMotos();
+  });
+</script>

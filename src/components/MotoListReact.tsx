@@ -38,11 +38,11 @@ export default function MotoListReact({
 }: MotoListReactProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
-  const [motos] = useState<Moto[]>(initialMotos);
+  const [motos, setMotos] = useState<Moto[]>(initialMotos);
   const [banners] = useState(initialBanners);
   const [filteredMotos, setFilteredMotos] = useState<Moto[]>(initialMotos);
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [pendingFilters, setPendingFilters] = useState<{
     price: boolean;
     displacement: boolean;
@@ -68,6 +68,20 @@ export default function MotoListReact({
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Listen for motos loaded event
+  useEffect(() => {
+    const handleMotosLoaded = (event: CustomEvent<Moto[]>) => {
+      setMotos(event.detail);
+      setFilteredMotos(event.detail);
+      setIsLoading(false);
+    };
+
+    window.addEventListener('motosLoaded', handleMotosLoaded as EventListener);
+    return () => {
+      window.removeEventListener('motosLoaded', handleMotosLoaded as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     // Solo aplicar filtros automáticamente para chips y ordenamiento en desktop
@@ -745,9 +759,17 @@ export default function MotoListReact({
         {/* Grid de motos */}
         <div className="flex-1">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gg-blue-700 mb-4"></div>
-              <p className="text-gray-500">Cargando motos...</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md p-4 animate-pulse"
+                >
+                  <div className="w-full h-48 bg-gray-200 rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              ))}
             </div>
           ) : filteredMotos.length > 0 ? (
             <>
