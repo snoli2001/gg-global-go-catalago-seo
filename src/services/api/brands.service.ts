@@ -5,14 +5,30 @@ class BrandsService {
 
   async getBrands(): Promise<Brand[]> {
     try {
+      if (!this.apiUrl) {
+        console.error('PUBLIC_API_URL is not defined');
+        throw new Error('API URL is not configured');
+      }
+
+      console.log('Fetching brands from:', `${this.apiUrl}/getBrands`);
+      
       const response = await fetch(`${this.apiUrl}/getBrands`);
       if (!response.ok) {
-        throw new Error('Failed to fetch brands');
+        const errorText = await response.text();
+        console.error('Failed to fetch brands:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText
+        });
+        throw new Error(`Failed to fetch brands: ${response.status} ${response.statusText}`);
       }
-      return await response.json();
+      
+      const data = await response.json();
+      console.log('Brands fetched successfully:', data.length);
+      return data;
     } catch (error) {
-      console.error('Error fetching brands:', error);
-      return [];
+      console.error('Error in getBrands:', error);
+      throw error; // Re-throw para manejar en el nivel superior
     }
   }
 }
