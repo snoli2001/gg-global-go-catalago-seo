@@ -10,21 +10,18 @@ import MobileDetails from "../../components/moto/MobileDetails.astro";
 import VideoSection from "../../components/moto/VideoSection.astro";
 import MotoScripts from "../../components/moto/MotoScripts.astro";
 
-// Generate static paths for all motorcycles
+export const prerender = true;
+
+// Generate all possible paths at build time
 export async function getStaticPaths() {
-  try {
-    const motos = await motoService.getMotos();
-    return motos.map((moto) => ({
-      params: { code: moto.code },
-      props: { moto },
-    }));
-  } catch (error) {
-    console.error("Error generating static paths:", error);
-    return [];
-  }
+  const motos = await motoService.getMotos();
+  return motos.map((moto: Moto) => ({
+    params: { code: moto.code },
+    props: { moto },
+  }));
 }
 
-// Get the motorcycle data for this page
+// Get the motorcycle data from props
 const { moto } = Astro.props;
 
 // Format price with thousands separator
@@ -47,10 +44,10 @@ const getVideoEmbedUrl = (url: string) => {
 };
 
 // Separate banner and gallery images
-const bannerImages = moto.carrusels.filter((carrusel) => carrusel.type === "B");
-const galleryImages = moto.carrusels.filter(
-  (carrusel) => carrusel.type === "G"
-);
+const bannerImages =
+  moto?.carrusels?.filter((carrusel) => carrusel.type === "B") || [];
+const galleryImages =
+  moto?.carrusels?.filter((carrusel) => carrusel.type === "G") || [];
 
 // Sort images by idCarrusel
 bannerImages.sort((a, b) => a.idCarrusel - b.idCarrusel);
@@ -62,11 +59,15 @@ const hasColorImage = (colorId: number) => {
 };
 
 // Find the first color that has a banner image
-const initialColorId = moto.colores.find(color => hasColorImage(color.color_id))?.color_id || moto.colores[0].color_id;
+const initialColorId =
+  moto.colores.find((color) => hasColorImage(color.color_id))?.color_id ||
+  moto.colores[0].color_id;
 
 // Get the initial banner image
 const getInitialBannerImage = () => {
-  const selectedImage = bannerImages.find(img => img.color_id === initialColorId);
+  const selectedImage = bannerImages.find(
+    (img) => img.color_id === initialColorId
+  );
   return selectedImage?.imagen || bannerImages[0]?.imagen || "/imgs/moto.png";
 };
 
@@ -78,16 +79,69 @@ const initialData = {
   motoCode: moto.code,
   financingUrl: import.meta.env.PUBLIC_FINANCING_URL,
 };
+
+// Prepare SEO metadata
+const title = `${moto.marca} ${moto.modelo} - Precio y Especificaciones`;
+const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.precio)} COP. Encuentra especificaciones técnicas detalladas y galería de imágenes.`;
+const mainImage = bannerImages[0]?.imagen || "/imgs/moto.png";
+
+// Prepare LCP image for preload
+const lcpImage = getInitialBannerImage();
 ---
 
-<Layout title={`${moto.marca} ${moto.modelo}`}>
+<Layout
+  title={title}
+  description={description}
+  image={mainImage}
+  type="product"
+>
+  <!-- Preload LCP image -->
+  <link rel="preload" href={lcpImage} as="image" fetchpriority="high" />
+
+  <!-- Preload critical fonts -->
+
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: `${moto.marca} ${moto.modelo}`,
+      image: mainImage,
+      description: description,
+      brand: {
+        "@type": "Brand",
+        name: moto.marca,
+      },
+      offers: {
+        "@type": "Offer",
+        price: moto.currency === "sol" ? moto.precio : moto.price_dollar,
+        priceCurrency: moto.currency === "sol" ? "PEN" : "USD",
+        availability: "https://schema.org/InStock",
+      },
+    })}
+  />
+
+  <meta
+    name="keywords"
+    content={`moto, ${moto.marca}, ${moto.modelo}, motocicleta, venta de motos`}
+  />
+
   <MotoScripts initialData={initialData} />
+
+  <div class="absolute top-4 left-4 z-50">
+    <a
+      href="/"
+      class="text-gg-blue-500 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+    >
+      Volver al Catálogo
+    </a>
+  </div>
 
   <MotoHeader
     moto={moto}
     bannerImages={bannerImages}
     formatPrice={formatPrice}
-    initialImage={getInitialBannerImage()}
+    initialImage={lcpImage}
   />
 
   <ColorSelector colors={moto.colores} hasColorImage={hasColorImage} />
@@ -96,7 +150,7 @@ const initialData = {
 
   <section class="container mx-auto px-4 py-8">
     <h2 class="text-2xl font-bold mb-6">Especificaciones técnicas</h2>
-    <SpecsSection client:load moto={moto} />
+    <SpecsSection client:idle moto={moto} />
   </section>
 
   {
@@ -106,7 +160,7 @@ const initialData = {
           Galería de imágenes
         </h5>
         <GalleryCarousel
-          client:load
+          client:visible
           images={galleryImages}
           modelName={`${moto.marca} ${moto.modelo}`}
         />

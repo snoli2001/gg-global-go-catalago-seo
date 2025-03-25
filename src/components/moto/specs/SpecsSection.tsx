@@ -61,7 +61,7 @@ const SpecsSection: React.FC<SpecsSectionProps> = ({ moto }) => {
             <button
               key={spec.label}
               className={`flex cursor-pointer flex-col items-center p-3 py-5 transition-all duration-200 hover:bg-slate-700 ${
-                selectedSpec === spec ? "bg-slate-600" : ""
+                selectedSpec.label === spec.label ? "bg-slate-600" : ""
               }`}
               onClick={() => setSelectedSpec(spec)}
             >

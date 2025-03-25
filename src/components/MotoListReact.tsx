@@ -10,6 +10,7 @@ import type { Moto } from "../types/moto.interface";
 import MotoCardReact from "./moto/MotoCardReact";
 import BannerCarousel from "./ui/BannerCarousel";
 import SearchBar from "./ui/SearchBar";
+import { motoService } from "../services/api/moto.service";
 
 interface FilterState {
   sort: string;
@@ -21,11 +22,19 @@ interface FilterState {
   performance: { min: string; max: string };
 }
 
-export default function MotoListReact({ motos }: { motos: Moto[] }) {
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [filteredMotos, setFilteredMotos] = useState<Moto[]>(motos);
+interface MotoListReactProps {
+  initialBrands: Brand[];
+  initialCategories: Category[];
+  initialMotos: Moto[];
+}
+
+export default function MotoListReact({ initialBrands, initialCategories, initialMotos }: MotoListReactProps) {
+  const [brands] = useState<Brand[]>(initialBrands);
+  const [categories] = useState<Category[]>(initialCategories);
+  const [motos] = useState<Moto[]>(initialMotos);
+  const [filteredMotos, setFilteredMotos] = useState<Moto[]>(initialMotos);
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [pendingFilters, setPendingFilters] = useState<{
     price: boolean;
     displacement: boolean;
@@ -46,18 +55,6 @@ export default function MotoListReact({ motos }: { motos: Moto[] }) {
     displacement: { min: "", max: "" },
     performance: { min: "", max: "" },
   });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [brandsData, categoriesData] = await Promise.all([
-        brandsService.getBrands(),
-        categoriesService.getCategories(),
-      ]);
-      setBrands(brandsData);
-      setCategories(categoriesData);
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     // Solo aplicar filtros automáticamente para chips y ordenamiento en desktop
@@ -605,7 +602,12 @@ export default function MotoListReact({ motos }: { motos: Moto[] }) {
 
         {/* Grid de motos */}
         <div className="flex-1">
-          {filteredMotos.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gg-blue-700 mb-4"></div>
+              <p className="text-gray-500">Cargando motos...</p>
+            </div>
+          ) : filteredMotos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {filteredMotos.map((moto) => (
                 <MotoCardReact key={moto.idModelo} moto={moto} />
