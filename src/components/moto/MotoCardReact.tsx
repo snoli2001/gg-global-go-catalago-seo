@@ -1,6 +1,7 @@
 import type { Moto } from "../../types/moto.interface";
 import type { Color } from "../../types/moto.interface";
 import MotoImage from "./MotoImage";
+import env from "../../config/env";
 
 interface Props {
   moto: Moto;
@@ -72,6 +73,18 @@ const formatPrice = (price: number, currency: string): string => {
   }
 };
 
+const calculateMonthlyPayment = (
+  price: number,
+  annualInterestRate: number,
+  months: number
+): number => {
+  const monthlyInterestRate = annualInterestRate / 12 / 100; // Convert annual rate to monthly decimal
+  const numerator =
+    monthlyInterestRate * Math.pow(1 + monthlyInterestRate, months);
+  const denominator = Math.pow(1 + monthlyInterestRate, months) - 1;
+  return price * (numerator / denominator);
+};
+
 const ColorCircle = ({
   color,
   selected = false,
@@ -105,7 +118,11 @@ const ColorCircle = ({
 };
 
 export default function MotoCardReact({ moto }: Props) {
-  const handleClick = () => {
+  const handleClick = (e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+
     const isInIframe = window !== window.parent;
 
     if (isInIframe) {
@@ -124,10 +141,19 @@ export default function MotoCardReact({ moto }: Props) {
     }
   };
 
+  const handleFinancingClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const financingUrl = `${env.financingUrl}?modelo=${encodeURIComponent(
+      moto.modelo
+    )}&precio=${moto.precio}&codigo=${moto.code}`;
+    window.open(financingUrl, "_blank");
+  };
+
   return (
     <article
       className="border cursor-pointer border-stroke rounded-lg bg-white w-full group"
-      onClick={handleClick}
+      onClick={() => handleClick()}
+      data-moto-card={moto.idModelo}
     >
       <header className="flex relative">
         <div className="w-full aspect-[4/3] overflow-hidden px-4 pt-5 pb-3">
@@ -162,11 +188,27 @@ export default function MotoCardReact({ moto }: Props) {
         </div>
 
         <div className="flex justify-between items-center py-1">
-          <span className="text-2xl font-medium text-gg-blue-700">
-            {moto.currency.toLowerCase() === "sol"
-              ? formatPrice(moto.precio, "sol")
-              : formatPrice(moto.price_dollar, "usd")}
-          </span>
+          <div className="flex flex-col">
+            <span className="text-2xl font-medium text-gg-blue-700">
+              {moto.currency.toLowerCase() === "sol"
+                ? formatPrice(moto.precio, "sol")
+                : formatPrice(moto.price_dollar, "usd")}
+            </span>
+            <span className="text-gg-red-600 font-medium flex items-center gap-1">
+              Desde{" "}
+              {formatPrice(
+                calculateMonthlyPayment(
+                  moto.currency.toLowerCase() === "sol"
+                    ? moto.precio
+                    : moto.price_dollar,
+                  20,
+                  24
+                ),
+                moto.currency.toLowerCase()
+              )}{" "}
+              al mes
+            </span>
+          </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
               {moto.colores
@@ -180,14 +222,41 @@ export default function MotoCardReact({ moto }: Props) {
           </div>
         </div>
       </section>
-      <footer className="pt-2 px-4 flex flex-col gap-0.5 pb-4">
-        <div className="flex gap-2 items-center">
-          <span className="text-sm text-primary-text">Cilindrada (CS):</span>
-          <span className="text-sm text-primary-text">{moto.cilindrada}</span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <span className="text-sm text-primary-text">Rendimiento:</span>
-          <span className="text-sm text-primary-text">{moto.rendimiento}</span>
+      <footer className="pt-2 px-4 pb-4">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-4">
+            <div className="flex gap-2 items-center">
+              <span className="text-sm text-primary-text">
+                Cilindrada (CS):
+              </span>
+              <span className="text-sm text-primary-text">
+                {moto.cilindrada}
+              </span>
+            </div>
+            <div className="flex gap-2 items-center">
+              <span className="text-sm text-primary-text">Rendimiento:</span>
+              <span className="text-sm text-primary-text">
+                {moto.rendimiento}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={handleFinancingClick}
+            className="w-full py-2 px-4 bg-gg-blue-500 hover:bg-gg-blue-600 text-white rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-4 h-4"
+            >
+              <path
+                fillRule="evenodd"
+                d="M1 4a1 1 0 011-1h16a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4zm12 4a3 3 0 11-6 0 3 3 0 016 0zM4 9a1 1 0 100-2 1 1 0 000 2zm13-1a1 1 0 11-2 0 1 1 0 012 0zM1.75 14.5a.75.75 0 000 1.5c4.417 0 8.693.603 12.749 1.73 1.111.309 2.251-.512 2.251-1.696v-.784a.75.75 0 00-1.5 0v.784a.272.272 0 01-.35.25A49.043 49.043 0 001.75 14.5z"
+              />
+            </svg>
+            Solicitar Financiamiento
+          </button>
         </div>
       </footer>
     </article>

@@ -12,59 +12,60 @@ import type { Moto } from "../types/moto.interface";
 let brands: Brand[] = [];
 let categories: Category[] = [];
 let banners: any[] = [];
+let initialMotos: Moto[] = [];
 
 try {
-  // Fetch critical data in parallel
-  const [brandsData, categoriesData, bannersData] = await Promise.all([
+  // Fetch all data in parallel including motos
+  const [brandsData, categoriesData, bannersData, motosData] = await Promise.all([
     brandsService.getBrands(),
     categoriesService.getCategories(),
-    bannersService.getBanners()
+    bannersService.getBanners(),
+    motoService.getMotos()
   ]);
 
   brands = brandsData;
   categories = categoriesData;
   banners = bannersData;
+  initialMotos = motosData;
 } catch (error) {
-  console.error("❌ Error fetching critical data:", error);
+  console.error("❌ Error fetching data:", error);
   brands = [];
   categories = [];
   banners = [];
+  initialMotos = [];
 }
-
-// Initialize motos as empty array
-let motos: Moto[] = [];
-
-// Fetch motos in the background after component mounts
-let motosPromise = motoService.getMotos().catch(error => {
-  console.error("❌ Error obteniendo motos:", error);
-  return [];
-});
 ---
 
 <MotoListReact
   client:load
   initialBrands={brands}
   initialCategories={categories}
-  initialMotos={[]}
+  initialMotos={initialMotos}
   initialBanners={banners}
 />
 
 <script>
-  // Hydrate motos data when it's ready
+  // Retry loading motos if initial load failed
   import { motoService } from "../services/api/moto.service";
 
-  async function hydrateMotos() {
+  async function retryLoadMotos() {
     try {
       const motos = await motoService.getMotos();
-      window.dispatchEvent(new CustomEvent('motosLoaded', { detail: motos }));
+      if (motos && motos.length > 0) {
+        window.dispatchEvent(new CustomEvent('motosLoaded', { detail: motos }));
+      }
     } catch (error) {
-      console.error("❌ Error loading motos:", error);
-      window.dispatchEvent(new CustomEvent('motosLoaded', { detail: [] }));
+      console.error("❌ Error retrying motos load:", error);
     }
   }
 
-  // Start loading motos after initial render
-  requestIdleCallback(() => {
-    hydrateMotos();
-  });
+  // Use setTimeout as a fallback for requestIdleCallback
+  const scheduleRetry = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+  
+  // Only retry if we don't have motos yet
+  if (document.querySelectorAll('[data-moto-card]').length === 0) {
+    scheduleRetry(() => {
+      retryLoadMotos();
+    });
+  }
 </script>
