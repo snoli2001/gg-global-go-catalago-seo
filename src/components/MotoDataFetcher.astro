@@ -8,35 +8,54 @@ import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
 
 // Logs iniciales
-console.warn("🚀 MotoDataFetcher.astro iniciando...");
-console.warn("📌 API URL:", import.meta.env.PUBLIC_API_URL);
+console.log("🚀 MotoDataFetcher.astro iniciando...");
+console.log("📌 API URL:", import.meta.env.PUBLIC_API_URL);
 
 let brands: Brand[] = [];
 let categories: Category[] = [];
 let motos: Moto[] = [];
 
 try {
-  console.warn("🔄 Iniciando fetch de datos...");
-  // Fetch all data at server side
-  [brands, categories, motos] = await Promise.all([
-    brandsService.getBrands(),
-    categoriesService.getCategories(),
-    motoService.getMotos(),
-  ]);
-  console.warn("✅ Datos obtenidos exitosamente:", {
+  console.log("🔄 Iniciando fetch de datos...");
+
+  // Fetch brands
+  try {
+    brands = await brandsService.getBrands();
+    console.log("✅ Brands obtenidos:", brands.length);
+  } catch (error) {
+    console.error("❌ Error obteniendo brands:", error);
+    brands = [];
+  }
+
+  // Fetch categories
+  try {
+    categories = await categoriesService.getCategories();
+    console.log("✅ Categories obtenidas:", categories.length);
+  } catch (error) {
+    console.error("❌ Error obteniendo categories:", error);
+    categories = [];
+  }
+
+  // Fetch motos
+  try {
+    motos = await motoService.getMotos();
+    console.log("✅ Motos obtenidas:", motos.length);
+  } catch (error) {
+    console.error("❌ Error obteniendo motos:", error);
+    motos = [];
+  }
+
+  console.log("✅ Datos totales obtenidos:", {
     brands: brands.length,
     categories: categories.length,
     motos: motos.length,
   });
 } catch (error) {
-  console.warn("❌ Error obteniendo datos:", error);
-  // Proporcionar datos vacíos en caso de error
+  console.error("❌ Error general en el fetch de datos:", error);
   brands = [];
   categories = [];
   motos = [];
 }
-
-console.warn("🎯 Renderizando componente con datos...");
 ---
 
 <MotoListReact
@@ -45,8 +64,3 @@ console.warn("🎯 Renderizando componente con datos...");
   initialCategories={categories}
   initialMotos={motos}
 />
-
-<script>
-  console.warn("📝 Script del cliente ejecutándose en MotoDataFetcher...");
-</script>
-
