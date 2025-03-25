@@ -1,48 +1,20 @@
 ---
-import MotoListReact from "../components/MotoListReact";
 import Layout from "../layouts/Layout.astro";
-import { brandsService } from "../services/api/brands.service";
-import { categoriesService } from "../services/api/categories.service";
-import { motoService } from "../services/api/moto.service";
-import type { Brand } from "../types/brand.interface";
-import type { Category } from "../types/category.interface";
-import type { Moto } from "../types/moto.interface";
+import MotoDataFetcher from "../components/MotoDataFetcher.astro";
 
 export const prerender = true; // Esto habilita SSR para esta página
 
-// Verificar que tenemos la variable de entorno
-console.log('API URL:', import.meta.env.PUBLIC_API_URL);
+// Logs iniciales
+console.warn('🚀 Página index.astro iniciando...');
+console.warn('📌 API URL:', import.meta.env.PUBLIC_API_URL);
 
-let brands: Brand[] = [];
-let categories: Category[] = [];
-let motos: Moto[] = [];
-
-try {
-  // Fetch all data at server side
-  [brands, categories, motos] = await Promise.all([
-    brandsService.getBrands(),
-    categoriesService.getCategories(),
-    motoService.getMotos(),
-  ]);
-  console.log('Data fetched successfully:', {
-    brands: brands.length,
-    categories: categories.length,
-    motos: motos.length
-  });
-} catch (error) {
-  console.error('Error fetching data:', error);
-  // Proporcionar datos vacíos en caso de error
-  brands = [];
-  categories = [];
-  motos = [];
-}
+console.warn('🎯 Renderizando componente con datos...');
 ---
 
 <Layout title="Catalogo de motos | Global Go">
-  <MotoListReact 
-    client:load 
-    initialBrands={brands}
-    initialCategories={categories}
-    initialMotos={motos}
-  />
+  <MotoDataFetcher />
 </Layout>
+
+<script>
+  console.warn('📝 Script del cliente ejecutándose en index...');
+</script>

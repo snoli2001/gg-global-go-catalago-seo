@@ -1,0 +1,52 @@
+---
+import MotoListReact from "./MotoListReact";
+import { brandsService } from "../services/api/brands.service";
+import { categoriesService } from "../services/api/categories.service";
+import { motoService } from "../services/api/moto.service";
+import type { Brand } from "../types/brand.interface";
+import type { Category } from "../types/category.interface";
+import type { Moto } from "../types/moto.interface";
+
+// Logs iniciales
+console.warn("🚀 MotoDataFetcher.astro iniciando...");
+console.warn("📌 API URL:", import.meta.env.PUBLIC_API_URL);
+
+let brands: Brand[] = [];
+let categories: Category[] = [];
+let motos: Moto[] = [];
+
+try {
+  console.warn("🔄 Iniciando fetch de datos...");
+  // Fetch all data at server side
+  [brands, categories, motos] = await Promise.all([
+    brandsService.getBrands(),
+    categoriesService.getCategories(),
+    motoService.getMotos(),
+  ]);
+  console.warn("✅ Datos obtenidos exitosamente:", {
+    brands: brands.length,
+    categories: categories.length,
+    motos: motos.length,
+  });
+} catch (error) {
+  console.warn("❌ Error obteniendo datos:", error);
+  // Proporcionar datos vacíos en caso de error
+  brands = [];
+  categories = [];
+  motos = [];
+}
+
+console.warn("🎯 Renderizando componente con datos...");
+---
+
+<MotoListReact
+  client:load
+  initialBrands={brands}
+  initialCategories={categories}
+  initialMotos={motos}
+/>
+
+<script>
+  console.warn("📝 Script del cliente ejecutándose en MotoDataFetcher...");
+</script>
+
