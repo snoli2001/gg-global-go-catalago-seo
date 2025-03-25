@@ -1,8 +1,44 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import MotoDataFetcher from "../components/MotoDataFetcher.astro";
+import MotoList from "../components/MotoList.astro";
+import { motoService } from "../services/api/moto.service";
+import { brandsService } from "../services/api/brands.service";
+import { categoriesService } from "../services/api/categories.service";
+import { bannersService } from "../services/api/banners.service";
+import type { Brand } from "../types/brand.interface";
+import type { Category } from "../types/category.interface";
+import type { Moto } from "../types/moto.interface";
+import type { Banner } from "../types/banner.interface";
+
+// Fetch data
+let brands: Brand[] = [];
+let categories: Category[] = [];
+let motos: Moto[] = [];
+let banners: Banner[] = [];
+
+try {
+  // Fetch all data in parallel
+  const [motosData, brandsData, categoriesData, bannersData] = await Promise.all([
+    motoService.getMotos(),
+    brandsService.getBrands(),
+    categoriesService.getCategories(),
+    bannersService.getBanners(),
+  ]);
+
+  brands = brandsData;
+  categories = categoriesData;
+  motos = motosData;
+  banners = bannersData;
+} catch (error) {
+  console.error("❌ Error general en el fetch de datos:", error);
+}
 ---
 
 <Layout title="Catalogo de motos | Global Go">
-  <MotoDataFetcher />
+  <MotoList
+    initialBrands={brands}
+    initialCategories={categories}
+    initialMotos={motos}
+    initialBanners={banners}
+  />
 </Layout>

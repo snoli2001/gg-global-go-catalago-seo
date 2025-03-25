@@ -8,9 +8,6 @@ import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
 
-// Logs iniciales
-console.log("🚀 MotoDataFetcher.astro iniciando...");
-console.log("📌 API URL:", import.meta.env.PUBLIC_API_URL);
 
 let brands: Brand[] = [];
 let categories: Category[] = [];
@@ -18,12 +15,10 @@ let motos: Moto[] = [];
 let banners: any[] = [];
 
 try {
-  console.log("🔄 Iniciando fetch de datos...");
 
   // Fetch brands
   try {
     brands = await brandsService.getBrands();
-    console.log("✅ Brands obtenidos:", brands.length);
   } catch (error) {
     console.error("❌ Error obteniendo brands:", error);
     brands = [];
@@ -32,7 +27,6 @@ try {
   // Fetch categories
   try {
     categories = await categoriesService.getCategories();
-    console.log("✅ Categories obtenidas:", categories.length);
   } catch (error) {
     console.error("❌ Error obteniendo categories:", error);
     categories = [];
@@ -41,7 +35,6 @@ try {
   // Fetch motos
   try {
     motos = await motoService.getMotos();
-    console.log("✅ Motos obtenidas:", motos.length);
   } catch (error) {
     console.error("❌ Error obteniendo motos:", error);
     motos = [];
@@ -50,18 +43,11 @@ try {
   // Fetch banners
   try {
     banners = await bannersService.getBanners();
-    console.log("✅ Banners obtenidos:", banners.length);
   } catch (error) {
     console.error("❌ Error obteniendo banners:", error);
     banners = [];
   }
-
-  console.log("✅ Datos totales obtenidos:", {
-    brands: brands.length,
-    categories: categories.length,
-    motos: motos.length,
-    banners: banners.length,
-  });
+  
 } catch (error) {
   console.error("❌ Error general en el fetch de datos:", error);
   brands = [];

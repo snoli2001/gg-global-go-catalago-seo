@@ -1,0 +1,54 @@
+---
+import type { Brand } from "../types/brand.interface";
+import type { Category } from "../types/category.interface";
+import type { Moto } from "../types/moto.interface";
+import MotoCardReact from "./moto/MotoCardReact";
+import BannerCarousel from "./ui/BannerCarousel";
+import SearchBar from "./ui/SearchBar";
+import MotoGrid from "./MotoGrid";
+
+interface Props {
+  initialBrands: Brand[];
+  initialCategories: Category[];
+  initialMotos: Moto[];
+  initialBanners: {
+    url: string;
+    code: string;
+    description: string;
+  }[];
+}
+
+const { initialBrands, initialCategories, initialMotos, initialBanners } = Astro.props;
+---
+
+<div class="flex flex-col gap-6 px-4 pb-4 pt-0 lg:p-6 mx-auto max-w-screen-2xl">
+  {/* Banner Container */}
+  <div class="-mx-4 lg:mx-0">
+    <BannerCarousel client:load banners={initialBanners} />
+  </div>
+
+  {/* Search Bar */}
+  <SearchBar client:load motos={initialMotos} />
+
+  <div class="flex flex-col lg:flex-row gap-6">
+    {/* Grid de motos pre-renderizado */}
+    <div class="flex-1">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        {initialMotos.map((moto) => (
+          <div data-moto-card data-moto-id={moto.idModelo}>
+            <MotoCardReact moto={moto} />
+          </div>
+        ))}
+      </div>
+      
+      {/* Componente de paginación del lado del cliente */}
+      <MotoGrid client:load motos={initialMotos} />
+    </div>
+  </div>
+</div>
+
+<style>
+  [data-moto-card] {
+    transition: opacity 0.3s ease-in-out;
+  }
+</style> 
