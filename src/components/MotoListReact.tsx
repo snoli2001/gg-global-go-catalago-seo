@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
-import { brandsService } from "../services/api/brands.service";
-import { categoriesService } from "../services/api/categories.service";
 import Select from "./ui/Select";
 import Chip from "./ui/Chip";
 import Input from "./ui/Input";
@@ -10,7 +8,6 @@ import type { Moto } from "../types/moto.interface";
 import MotoCardReact from "./moto/MotoCardReact";
 import BannerCarousel from "./ui/BannerCarousel";
 import SearchBar from "./ui/SearchBar";
-import { motoService } from "../services/api/moto.service";
 
 interface FilterState {
   sort: string;
@@ -28,7 +25,11 @@ interface MotoListReactProps {
   initialMotos: Moto[];
 }
 
-export default function MotoListReact({ initialBrands, initialCategories, initialMotos }: MotoListReactProps) {
+export default function MotoListReact({
+  initialBrands,
+  initialCategories,
+  initialMotos,
+}: MotoListReactProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
   const [motos] = useState<Moto[]>(initialMotos);

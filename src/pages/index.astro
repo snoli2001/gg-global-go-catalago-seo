@@ -5,7 +5,9 @@ import { brandsService } from "../services/api/brands.service";
 import { categoriesService } from "../services/api/categories.service";
 import { motoService } from "../services/api/moto.service";
 
-// Fetch all data at build time
+export const prerender = false; // Esto habilita SSR para esta página
+
+// Fetch all data at server side
 const [brands, categories, motos] = await Promise.all([
   brandsService.getBrands(),
   categoriesService.getCategories(),
