@@ -1,20 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import MotoDataFetcher from "../components/MotoDataFetcher.astro";
-
-export const prerender = true; // Esto habilita SSR para esta página
-
-// Logs iniciales
-console.warn('🚀 Página index.astro iniciando...');
-console.warn('📌 API URL:', import.meta.env.PUBLIC_API_URL);
-
-console.warn('🎯 Renderizando componente con datos...');
 ---
 
 <Layout title="Catalogo de motos | Global Go">
   <MotoDataFetcher />
 </Layout>
-
-<script>
-  console.warn('📝 Script del cliente ejecutándose en index...');
-</script>
