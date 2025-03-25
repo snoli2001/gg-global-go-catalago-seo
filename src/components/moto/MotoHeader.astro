@@ -64,18 +64,27 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
       alt={`${moto.marca} ${moto.modelo}`}
       class="h-56 w-auto relative mix-blend-multiply z-10 lg:h-80 xl:h-[420px] moto-image-transition"
       fetchpriority="high"
+      decoding="async"
+      width="800"
+      height="600"
     />
     <img
       src="/imgs/moto-detail-background-desktop.jpg"
       alt="Global Go Background"
       class="absolute top-0 left-0 w-full h-full hidden md:block lg:hidden xl:block"
       loading="lazy"
+      decoding="async"
+      width="1920"
+      height="1080"
     />
     <img
       src="/imgs/moto-detail-background-desktop-lg.jpg"
       alt="Global Go Background"
       class="absolute top-0 left-0 w-full h-full hidden lg:block xl:hidden"
       loading="lazy"
+      decoding="async"
+      width="1920"
+      height="1080"
     />
   </div>
 
@@ -84,9 +93,20 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
     alt={`Logo ${moto.marca}`}
     class="absolute top-5 right-5 w-20 h-20 md:hidden"
     loading="lazy"
+    decoding="async"
+    width="80"
+    height="80"
   />
   <div class="absolute top-5 left-12 hidden md:block xl:left-24">
-    <img src={moto.logo} alt={`Logo ${moto.marca}`} class="w-20 h-20" />
+    <img 
+      src={moto.logo} 
+      alt={`Logo ${moto.marca}`} 
+      class="w-20 h-20"
+      loading="lazy"
+      decoding="async"
+      width="80"
+      height="80"
+    />
   </div>
 </header>
 

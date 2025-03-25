@@ -25,6 +25,10 @@ const GalleryCarousel: React.FC<GalleryCarouselProps> = ({ images, modelName }) 
           src={images[currentIndex].imagen}
           alt={`${modelName} - Imagen ${currentIndex + 1}`}
           className="h-full w-full object-contain bg-gray-100 transition-opacity duration-300"
+          loading="eager"
+          decoding="async"
+          width={800}
+          height={600}
         />
         
         {/* Navigation Buttons */}
@@ -68,6 +72,10 @@ const GalleryCarousel: React.FC<GalleryCarouselProps> = ({ images, modelName }) 
               src={image.imagen}
               alt={`${modelName} - Thumbnail ${index + 1}`}
               className="h-full w-full object-cover transition-opacity hover:opacity-80"
+              loading="lazy"
+              decoding="async"
+              width={100}
+              height={100}
             />
           </button>
         ))}
