@@ -3,6 +3,7 @@ export interface Color {
   color_id: number;
   hex1: string;
   hex2: string;
+  name_color: string;
 }
 
 export interface Carrusel {

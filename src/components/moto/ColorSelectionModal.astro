@@ -1,0 +1,119 @@
+---
+interface Props {
+  colors: Array<{
+    color_id: number;
+    modelo: string;
+    hex1: string;
+    hex2: string;
+    name_color: string;
+  }>;
+  motoCode: string;
+}
+
+const { colors, motoCode } = Astro.props;
+const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
+---
+
+<div id="colorSelectionModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+  <div class="bg-white rounded-2xl p-8 max-w-lg w-full mx-4 relative">
+    <button 
+      type="button" 
+      id="closeModalButton"
+      class="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+      aria-label="Cerrar modal"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <h2 class="text-2xl font-bold mb-8 text-center">¿Qué color de moto te gustaría financiar?</h2>
+    
+    <div class="flex justify-center gap-8 mb-8">
+      {colors.map((color) => (
+        <label class="flex flex-col items-center gap-2 cursor-pointer group">
+          <input
+            type="radio"
+            name="selectedColor"
+            value={color.color_id}
+            class="hidden"
+            checked={colors.length === 1}
+          />
+          <div class="relative">
+            <div 
+              class="w-12 h-12 rounded-full transition-transform border-2 border-gray-200 group-hover:scale-110 group-hover:border-[#2196F3]" 
+              style={`background: linear-gradient(45deg, ${color.hex1}, ${color.hex2})`}
+            ></div>
+            <div class="absolute inset-[-4px] rounded-full border-2 border-[#2196F3] opacity-0 transition-opacity radio-outline"></div>
+          </div>
+          <span class="text-gray-600 text-sm">{color.name_color}</span>
+        </label>
+      ))}
+    </div>
+
+    <button
+      id="financingButton"
+      class="w-full bg-[#2196F3] text-white py-4 px-6 rounded-lg text-lg font-medium hover:bg-[#1976D2] transition-colors"
+    >
+      Solicitar financiamiento
+    </button>
+  </div>
+</div>
+
+<style>
+  input[type="radio"]:checked ~ .relative .radio-outline {
+    opacity: 1;
+  }
+</style>
+
+<script define:vars={{ financingUrl, motoCode }}>
+  const modal = document.getElementById('colorSelectionModal');
+  const financingButton = document.getElementById('financingButton');
+  const closeButton = document.getElementById('closeModalButton');
+  const radioInputs = document.querySelectorAll('input[name="selectedColor"]');
+  
+  function closeModal() {
+    modal?.classList.add('hidden');
+    modal?.classList.remove('flex');
+  }
+
+  function handleFinancing(colorId) {
+    const url = `${financingUrl}?codigoMoto=${motoCode}_${colorId}`;
+
+    try {
+      if (window !== window.parent) {
+        window.parent.location.href = url;
+      } else {
+        window.location.href = url;
+      }
+    } catch (e) {
+      console.warn('No se pudo acceder a la ventana padre. Redirigiendo en la ventana actual.');
+      window.location.href = url;
+    }
+  }
+
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  closeButton?.addEventListener('click', closeModal);
+
+  financingButton?.addEventListener('click', () => {
+    const selectedColor = document.querySelector('input[name="selectedColor"]:checked');
+    if (selectedColor) {
+      handleFinancing(selectedColor.value);
+    }
+  });
+
+  if (radioInputs.length === 1) {
+    radioInputs[0].checked = true;
+  }
+
+  window.showColorSelectionModal = () => {
+    modal?.classList.remove('hidden');
+    modal?.classList.add('flex');
+  };
+</script>
+

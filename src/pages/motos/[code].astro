@@ -9,6 +9,7 @@ import ColorSelector from "../../components/moto/ColorSelector.astro";
 import MobileDetails from "../../components/moto/MobileDetails.astro";
 import VideoSection from "../../components/moto/VideoSection.astro";
 import MotoScripts from "../../components/moto/MotoScripts.astro";
+import ColorSelectionModal from "../../components/moto/ColorSelectionModal.astro";
 
 export const prerender = true;
 
@@ -82,7 +83,7 @@ const initialData = {
 
 // Prepare SEO metadata
 const title = `${moto.marca} ${moto.modelo} - Precio y Especificaciones`;
-const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.precio)} COP. Encuentra especificaciones técnicas detalladas y galería de imágenes.`;
+const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.precio)} ${moto.currency === "sol" ? "Soles" : "Dólares"}. Encuentra especificaciones técnicas detalladas y galería de imágenes.`;
 const mainImage = bannerImages[0]?.imagen || "/imgs/moto.png";
 
 // Prepare LCP image for preload
@@ -126,49 +127,87 @@ const lcpImage = getInitialBannerImage();
 
   <MotoScripts initialData={initialData} />
 
-  <div class="absolute top-4 left-2 z-50">
-    <a
-      href="/"
-      class="lg:hidden text-gg-blue-600 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-    >
-      Volver al Catálogo
-    </a>
-  </div>
+  <body
+    data-moto-code={moto.code}
+    data-financing-url={import.meta.env.PUBLIC_FINANCING_URL}
+  >
+    <div class="absolute top-4 left-2 z-50">
+      <a
+        href="/"
+        class="lg:hidden text-gg-blue-600 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+      >
+        Volver al Catálogo
+      </a>
+    </div>
 
-  <MotoHeader
-    moto={moto}
-    bannerImages={bannerImages}
-    formatPrice={formatPrice}
-    initialImage={lcpImage}
-  />
+    <MotoHeader
+      moto={moto}
+      bannerImages={bannerImages}
+      formatPrice={formatPrice}
+      initialImage={lcpImage}
+    />
 
-  <ColorSelector colors={moto.colores} hasColorImage={hasColorImage} />
+    <ColorSelector colors={moto.colores} hasColorImage={hasColorImage} />
 
-  <MobileDetails moto={moto} formatPrice={formatPrice} />
+    <MobileDetails moto={moto} formatPrice={formatPrice} />
 
-  <section class="container mx-auto px-4 py-8">
-    <h2 class="text-2xl font-bold mb-6">Especificaciones técnicas</h2>
-    <SpecsSection client:idle moto={moto} />
-  </section>
+    <section class="container mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-6">Especificaciones técnicas</h2>
+      <SpecsSection client:idle moto={moto} />
+    </section>
 
-  {
-    galleryImages.length > 0 && (
-      <section class="px-4 bg-dark p-8 lg:px-24 max-w-screen-2xl mx-auto">
-        <h5 class="text-white text-xl lg:text-3xl font-semibold mb-4 lg:mb-8">
-          Galería de imágenes
-        </h5>
-        <GalleryCarousel
-          client:visible
-          images={galleryImages}
-          modelName={`${moto.marca} ${moto.modelo}`}
-        />
-      </section>
-    )
-  }
+    {
+      galleryImages.length > 0 && (
+        <section class="px-4 bg-dark p-8 lg:px-24 max-w-screen-2xl mx-auto">
+          <h5 class="text-white text-xl lg:text-3xl font-semibold mb-4 lg:mb-8">
+            Galería de imágenes
+          </h5>
+          <GalleryCarousel
+            client:visible
+            images={galleryImages}
+            modelName={`${moto.marca} ${moto.modelo}`}
+          />
+        </section>
+      )
+    }
 
-  <VideoSection
-    moto={moto}
-    isValidYouTubeUrl={isValidYouTubeUrl}
-    getVideoEmbedUrl={getVideoEmbedUrl}
-  />
+    <VideoSection
+      moto={moto}
+      isValidYouTubeUrl={isValidYouTubeUrl}
+      getVideoEmbedUrl={getVideoEmbedUrl}
+    />
+
+    <ColorSelectionModal colors={moto.colores} motoCode={moto.code} />
+  </body>
 </Layout>
+
+<script>
+  // Handle financing button clicks
+  document.querySelectorAll("[data-financing-button]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const colors = JSON.parse(button.getAttribute("data-colors") || "[]");
+      if (colors.length === 1) {
+        // If there's only one color, redirect directly
+        const motoCode = document.body.dataset.motoCode;
+        const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
+        const url = `${financingUrl}?codigoMoto=${motoCode}_${colors[0].color_id}`;
+
+        try {
+          if (window !== window.parent) {
+            window.parent.location.href = url;
+          } else {
+            window.location.href = url;
+          }
+        } catch (e) {
+          console.warn(
+            "No se pudo acceder a la ventana padre. Redirigiendo en la ventana actual."
+          );
+          window.location.href = url;
+        }
+      } else {
+        // Show color selection modal
+        (window as any).showColorSelectionModal();
+      }
+    });
+  });
+</script>

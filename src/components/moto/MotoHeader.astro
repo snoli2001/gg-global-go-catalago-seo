@@ -50,7 +50,8 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
       </p>
       <section class="w-full lg:block hidden">
         <button
-          onclick="redirectToFinancing()"
+          data-financing-button
+          data-colors={JSON.stringify(moto.colores)}
           class="cursor-pointer inline-block px-6 py-3 bg-gg-blue-500 text-white rounded-lg hover:bg-gg-blue-600 transition-colors w-full"
         >
           Financiar moto
