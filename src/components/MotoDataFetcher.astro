@@ -1,5 +1,4 @@
 ---
-import MotoListReact from "./MotoListReact";
 import { brandsService } from "../services/api/brands.service";
 import { categoriesService } from "../services/api/categories.service";
 import { motoService } from "../services/api/moto.service";
@@ -7,6 +6,13 @@ import { bannersService } from "../services/api/banners.service";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
+import MotoCard from "./moto/MotoCard.astro";
+import Layout from "../layouts/Layout.astro";
+import SearchBar from "./ui/SearchBar.astro";
+import MotoFiltersBar from "./MotoFiltersBar";
+import BannerCarousel from "./ui/BannerCarousel";
+
+export const prerender = true;
 
 // Fetch critical data first
 let brands: Brand[] = [];
@@ -16,12 +22,13 @@ let initialMotos: Moto[] = [];
 
 try {
   // Fetch all data in parallel including motos
-  const [brandsData, categoriesData, bannersData, motosData] = await Promise.all([
-    brandsService.getBrands(),
-    categoriesService.getCategories(),
-    bannersService.getBanners(),
-    motoService.getMotos()
-  ]);
+  const [brandsData, categoriesData, bannersData, motosData] =
+    await Promise.all([
+      brandsService.getBrands(),
+      categoriesService.getCategories(),
+      bannersService.getBanners(),
+      motoService.getMotos(),
+    ]);
 
   brands = brandsData;
   categories = categoriesData;
@@ -36,36 +43,28 @@ try {
 }
 ---
 
-<MotoListReact
-  client:load
-  initialBrands={brands}
-  initialCategories={categories}
-  initialMotos={initialMotos}
-  initialBanners={banners}
-/>
-
-<script>
-  // Retry loading motos if initial load failed
-  import { motoService } from "../services/api/moto.service";
-
-  async function retryLoadMotos() {
-    try {
-      const motos = await motoService.getMotos();
-      if (motos && motos.length > 0) {
-        window.dispatchEvent(new CustomEvent('motosLoaded', { detail: motos }));
-      }
-    } catch (error) {
-      console.error("❌ Error retrying motos load:", error);
-    }
-  }
-
-  // Use setTimeout as a fallback for requestIdleCallback
-  const scheduleRetry = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
-  
-  // Only retry if we don't have motos yet
-  if (document.querySelectorAll('[data-moto-card]').length === 0) {
-    scheduleRetry(() => {
-      retryLoadMotos();
-    });
-  }
-</script>
+<Layout title="Catalogo de motos | Global Go">
+  <div
+    class="flex flex-col gap-6 px-4 pb-4 pt-0 lg:p-6 mx-auto max-w-screen-2xl"
+  >
+    <div class="-mx-4 lg:mx-0">
+      <BannerCarousel client:load banners={banners} />
+    </div>
+    <SearchBar motos={initialMotos} />
+    <div class="flex flex-col lg:flex-row gap-6">
+      <MotoFiltersBar
+        client:load
+        initialBrands={brands}
+        initialCategories={categories}
+      />
+      <div class="flex-1">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          id="moto-grid"
+        >
+          {initialMotos.map((moto) => <MotoCard moto={moto} />)}
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
