@@ -121,9 +121,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
     const motoCode = moto.code;
 
     if (isInIframe && window.top) {
-      window.top.location.href = `${
-        import.meta.env.PUBLIC_MOTO_DETAIL_URL
-      }?codigoMoto=${motoCode}`;
+      window.top.location.href = `${import.meta.env.PUBLIC_MOTO_DETAIL_URL}?codigoMoto=${motoCode}`;
       return;
     }
 
@@ -158,10 +156,13 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
           <img
             src={getBannerImage(moto)}
             alt={moto.modelo}
-            loading="eager"
+            loading="lazy"
             decoding="async"
+            fetchPriority="low"
             onLoad={() => setImageLoaded(true)}
-            className={`object-contain h-auto w-full transition-all duration-300 group-hover:scale-105 group-hover:rotate-3 `}
+            className={`object-contain h-auto w-full transition-all duration-300 group-hover:scale-105 group-hover:rotate-3 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
             style={{ viewTransitionName: `moto-${moto.idModelo}` }}
           />
         </div>
@@ -172,7 +173,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
           <img
             src={moto.logo}
             alt={moto.marca}
-            loading="eager"
+            loading="lazy"
             className="w-12 h-auto"
             style={{ viewTransitionName: `moto-marca-${moto.idModelo}` }}
           />
@@ -226,18 +227,12 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-4">
             <div className="flex gap-2 items-center">
-              <span className="text-sm text-primary-text">
-                Cilindrada (CS):
-              </span>
-              <span className="text-sm text-primary-text">
-                {moto.cilindrada}
-              </span>
+              <span className="text-sm text-primary-text">Cilindrada (CS):</span>
+              <span className="text-sm text-primary-text">{moto.cilindrada}</span>
             </div>
             <div className="flex gap-2 items-center">
               <span className="text-sm text-primary-text">Rendimiento:</span>
-              <span className="text-sm text-primary-text">
-                {moto.rendimiento}
-              </span>
+              <span className="text-sm text-primary-text">{moto.rendimiento}</span>
             </div>
           </div>
         </div>
@@ -246,4 +241,4 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
   );
 });
 
-export default MotoCard;
+export default MotoCard; 
