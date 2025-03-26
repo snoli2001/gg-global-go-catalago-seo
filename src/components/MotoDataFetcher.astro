@@ -57,13 +57,11 @@ try {
         initialBrands={brands}
         initialCategories={categories}
       />
-      <div class="flex-1">
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          id="moto-grid"
-        >
-          {initialMotos.map((moto) => <MotoCard moto={moto} />)}
-        </div>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        id="moto-grid"
+      >
+        {initialMotos.map((moto) => <MotoCard moto={moto} />)}
       </div>
     </div>
   </div>
