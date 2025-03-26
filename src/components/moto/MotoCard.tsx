@@ -153,8 +153,6 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
             src={getBannerImage(moto)}
             alt={`Moto ${moto.marca} ${moto.modelo}`}
             loading="lazy"
-            decoding="async"
-            fetchPriority="low"
             className="object-contain w-full h-auto transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3"
             style={{ viewTransitionName: `moto-${moto.idModelo}` }}
           />
