@@ -164,7 +164,6 @@ export default function MotoFiltersBar({
     const motoGrid = document.getElementById("moto-grid");
 
     if (motoGrid) {
-      motoGrid.innerHTML = "";
       visibleCards.forEach((card, index) => {
         if (index >= startIndex && index < endIndex) {
           card.style.display = ""; // Show cards for current page
