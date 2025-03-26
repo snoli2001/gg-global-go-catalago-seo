@@ -112,23 +112,42 @@ export default function MotoFiltersBar({
       }
 
       // Apply displacement filter
-      if (shouldShow && (filters.displacement.min || filters.displacement.max)) {
-        const cilindrada = parseFloat(card.getAttribute("data-cilindrada") || "0");
-        if (filters.displacement.min && cilindrada < parseFloat(filters.displacement.min)) {
+      if (
+        shouldShow &&
+        (filters.displacement.min || filters.displacement.max)
+      ) {
+        const cilindrada = parseFloat(
+          card.getAttribute("data-cilindrada") || "0"
+        );
+        if (
+          filters.displacement.min &&
+          cilindrada < parseFloat(filters.displacement.min)
+        ) {
           shouldShow = false;
         }
-        if (filters.displacement.max && cilindrada > parseFloat(filters.displacement.max)) {
+        if (
+          filters.displacement.max &&
+          cilindrada > parseFloat(filters.displacement.max)
+        ) {
           shouldShow = false;
         }
       }
 
       // Apply performance filter
       if (shouldShow && (filters.performance.min || filters.performance.max)) {
-        const rendimiento = parseFloat(card.getAttribute("data-rendimiento") || "0");
-        if (filters.performance.min && rendimiento < parseFloat(filters.performance.min)) {
+        const rendimiento = parseFloat(
+          card.getAttribute("data-rendimiento") || "0"
+        );
+        if (
+          filters.performance.min &&
+          rendimiento < parseFloat(filters.performance.min)
+        ) {
           shouldShow = false;
         }
-        if (filters.performance.max && rendimiento > parseFloat(filters.performance.max)) {
+        if (
+          filters.performance.max &&
+          rendimiento > parseFloat(filters.performance.max)
+        ) {
           shouldShow = false;
         }
       }
@@ -164,11 +183,17 @@ export default function MotoFiltersBar({
     const motoGrid = document.getElementById("moto-grid");
 
     if (motoGrid) {
+      // Limpiar el grid antes de repoblarlo
+      while (motoGrid.firstChild) {
+        motoGrid.removeChild(motoGrid.firstChild);
+      }
+
+      // Insertar solo los elementos visibles en la página actual
       visibleCards.forEach((card, index) => {
         if (index >= startIndex && index < endIndex) {
-          card.style.display = ""; // Show cards for current page
+          card.style.display = ""; // Asegurar que estén visibles
+          motoGrid.appendChild(card);
         }
-        motoGrid.appendChild(card);
       });
     }
 
@@ -183,7 +208,7 @@ export default function MotoFiltersBar({
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -344,13 +369,24 @@ export default function MotoFiltersBar({
           disabled={currentPage === 1}
           className={`px-3 py-2 rounded-lg ${
             currentPage === 1
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
           }`}
           aria-label="Página anterior"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
 
@@ -374,8 +410,8 @@ export default function MotoFiltersBar({
             onClick={() => handlePageChange(number)}
             className={`px-3 py-1 rounded-lg ${
               currentPage === number
-                ? 'bg-gg-blue-700 text-white'
-                : 'hover:bg-gray-50 border border-gray-300'
+                ? "bg-gg-blue-700 text-white"
+                : "hover:bg-gray-50 border border-gray-300"
             }`}
           >
             {number}
@@ -401,13 +437,24 @@ export default function MotoFiltersBar({
           disabled={currentPage === totalPages}
           className={`px-3 py-2 rounded-lg ${
             currentPage === totalPages
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
           }`}
           aria-label="Siguiente página"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </div>
@@ -446,7 +493,11 @@ export default function MotoFiltersBar({
         className={`
           fixed lg:static inset-y-0 left-0 w-full lg:w-72 bg-white shadow-lg lg:shadow z-50
           transform transition-transform duration-300 ease-in-out
-          ${isFilterPanelOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${
+            isFilterPanelOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
         `}
       >
         <div className="h-full overflow-y-auto">
@@ -526,11 +577,7 @@ export default function MotoFiltersBar({
                     placeholder="Desde"
                     value={filters.price.min}
                     onChange={(e) =>
-                      handleNumericFilterChange(
-                        "price",
-                        "min",
-                        e.target.value
-                      )
+                      handleNumericFilterChange("price", "min", e.target.value)
                     }
                     prefix="S/"
                   />
@@ -539,11 +586,7 @@ export default function MotoFiltersBar({
                     placeholder="Hasta"
                     value={filters.price.max}
                     onChange={(e) =>
-                      handleNumericFilterChange(
-                        "price",
-                        "max",
-                        e.target.value
-                      )
+                      handleNumericFilterChange("price", "max", e.target.value)
                     }
                     prefix="S/"
                   />
@@ -581,17 +624,15 @@ export default function MotoFiltersBar({
               <div className="mb-4">
                 <h4 className="text-lg font-medium mb-2">Transmisión</h4>
                 <div className="flex flex-wrap gap-2">
-                  {["Mecánica", "Automática", "Semiautomática"].map(
-                    (type) => (
-                      <Chip
-                        key={type}
-                        label={type}
-                        value={type}
-                        isSelected={filters.transmission.includes(type)}
-                        onClick={() => handleTransmissionToggle(type)}
-                      />
-                    )
-                  )}
+                  {["Mecánica", "Automática", "Semiautomática"].map((type) => (
+                    <Chip
+                      key={type}
+                      label={type}
+                      value={type}
+                      isSelected={filters.transmission.includes(type)}
+                      onClick={() => handleTransmissionToggle(type)}
+                    />
+                  ))}
                 </div>
               </div>
 
@@ -719,7 +760,10 @@ export default function MotoFiltersBar({
       {/* Main content area */}
       <div className="flex-1 pb-24">
         {/* Grid container will be rendered here */}
-        <div id="moto-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          id="moto-grid"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {/* Moto cards will be rendered here */}
         </div>
 
@@ -736,4 +780,4 @@ export default function MotoFiltersBar({
       )}
     </div>
   );
-} 
+}
