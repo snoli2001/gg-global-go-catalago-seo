@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import type { Moto } from "../../types/moto.interface";
 import type { Color } from "../../types/moto.interface";
 import { Image } from "astro:assets";
@@ -114,6 +114,8 @@ const ColorCircle = ({
 };
 
 const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const handleClick = () => {
     const isInIframe = window !== window.parent;
     const motoCode = moto.code;
@@ -134,7 +136,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
 
   return (
     <article
-      className="border cursor-pointer border-stroke rounded-lg bg-white w-full group"
+      className="border cursor-pointer border-stroke rounded-lg bg-white w-full group aspect-[11/8]"
       data-moto
       data-id={moto.idModelo}
       data-marca={moto.marca}
@@ -147,14 +149,20 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
       onClick={handleClick}
     >
       <header className="flex relative">
-        <div className="w-full aspect-[4/3] overflow-hidden px-4 pt-5 pb-3">
+        <div className="w-full aspect-[11/8] overflow-hidden px-4 pt-5 pb-3 relative">
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />
+          )}
           <img
             src={getBannerImage(moto)}
             alt={moto.modelo}
             loading="lazy"
             decoding="async"
             fetchPriority="low"
-            className="object-contain h-auto w-full transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"
+            onLoad={() => setImageLoaded(true)}
+            className={`object-contain h-auto w-full transition-all duration-300 group-hover:scale-105 group-hover:rotate-3 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
             style={{ viewTransitionName: `moto-${moto.idModelo}` }}
           />
         </div>
