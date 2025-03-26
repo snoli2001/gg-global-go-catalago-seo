@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, memo } from "react";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
+import type { Moto } from "../types/moto.interface";
 import Select from "./ui/Select";
 import Chip from "./ui/Chip";
 import Input from "./ui/Input";
+import MotoCard from "./moto/MotoCard";
 
 interface FilterState {
   sort: string;
@@ -18,16 +20,19 @@ interface FilterState {
 interface MotoFiltersBarProps {
   initialBrands: Brand[];
   initialCategories: Category[];
+  initialMotos: Moto[];
   itemsPerPage?: number;
 }
 
-export default function MotoFiltersBar({
+const MotoFiltersBar = memo(function MotoFiltersBar({
   initialBrands,
   initialCategories,
+  initialMotos,
   itemsPerPage = 12,
 }: MotoFiltersBarProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
+  const [motos, setMotos] = useState<Moto[]>(initialMotos);
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -69,106 +74,98 @@ export default function MotoFiltersBar({
     applyFilters();
   }, [currentPage]);
 
-  const applyFilters = () => {
-    const motoCards = document.querySelectorAll<HTMLElement>("[data-moto]");
-    const visibleCards: HTMLElement[] = [];
+  const applyFilters = useCallback(() => {
+    let filteredMotos = [...initialMotos];
 
-    motoCards.forEach((card) => {
-      let shouldShow = true;
+    // Apply brand filter
+    if (filters.brands.length > 0) {
+      filteredMotos = filteredMotos.filter((moto) =>
+        filters.brands.includes(moto.marca)
+      );
+    }
 
-      // Apply brand filter
-      if (filters.brands.length > 0) {
-        const marca = card.getAttribute("data-marca");
-        if (!marca || !filters.brands.includes(marca)) {
-          shouldShow = false;
+    // Apply category filter
+    if (filters.categories.length > 0) {
+      filteredMotos = filteredMotos.filter((moto) =>
+        filters.categories.includes(moto.categoria)
+      );
+    }
+
+    // Apply transmission filter
+    if (filters.transmission.length > 0) {
+      filteredMotos = filteredMotos.filter((moto) =>
+        filters.transmission.includes(moto.transmision)
+      );
+    }
+
+    // Apply price filter
+    if (filters.price.min || filters.price.max) {
+      filteredMotos = filteredMotos.filter((moto) => {
+        const price =
+          moto.currency.toLowerCase() === "sol"
+            ? moto.precio
+            : moto.price_dollar;
+        if (filters.price.min && price < parseFloat(filters.price.min)) {
+          return false;
         }
-      }
-
-      // Apply category filter
-      if (shouldShow && filters.categories.length > 0) {
-        const categoria = card.getAttribute("data-categoria");
-        if (!categoria || !filters.categories.includes(categoria)) {
-          shouldShow = false;
+        if (filters.price.max && price > parseFloat(filters.price.max)) {
+          return false;
         }
-      }
+        return true;
+      });
+    }
 
-      // Apply transmission filter
-      if (shouldShow && filters.transmission.length > 0) {
-        const transmision = card.getAttribute("data-transmision");
-        if (!transmision || !filters.transmission.includes(transmision)) {
-          shouldShow = false;
-        }
-      }
-
-      // Apply price filter
-      if (shouldShow && (filters.price.min || filters.price.max)) {
-        const precio = parseFloat(card.getAttribute("data-precio") || "0");
-        if (filters.price.min && precio < parseFloat(filters.price.min)) {
-          shouldShow = false;
-        }
-        if (filters.price.max && precio > parseFloat(filters.price.max)) {
-          shouldShow = false;
-        }
-      }
-
-      // Apply displacement filter
-      if (
-        shouldShow &&
-        (filters.displacement.min || filters.displacement.max)
-      ) {
-        const cilindrada = parseFloat(
-          card.getAttribute("data-cilindrada") || "0"
-        );
+    // Apply displacement filter
+    if (filters.displacement.min || filters.displacement.max) {
+      filteredMotos = filteredMotos.filter((moto) => {
+        const displacement = parseFloat(moto.cilindrada);
         if (
           filters.displacement.min &&
-          cilindrada < parseFloat(filters.displacement.min)
+          displacement < parseFloat(filters.displacement.min)
         ) {
-          shouldShow = false;
+          return false;
         }
         if (
           filters.displacement.max &&
-          cilindrada > parseFloat(filters.displacement.max)
+          displacement > parseFloat(filters.displacement.max)
         ) {
-          shouldShow = false;
+          return false;
         }
-      }
+        return true;
+      });
+    }
 
-      // Apply performance filter
-      if (shouldShow && (filters.performance.min || filters.performance.max)) {
-        const rendimiento = parseFloat(
-          card.getAttribute("data-rendimiento") || "0"
-        );
+    // Apply performance filter
+    if (filters.performance.min || filters.performance.max) {
+      filteredMotos = filteredMotos.filter((moto) => {
+        const performance = parseFloat(moto.rendimiento);
         if (
           filters.performance.min &&
-          rendimiento < parseFloat(filters.performance.min)
+          performance < parseFloat(filters.performance.min)
         ) {
-          shouldShow = false;
+          return false;
         }
         if (
           filters.performance.max &&
-          rendimiento > parseFloat(filters.performance.max)
+          performance > parseFloat(filters.performance.max)
         ) {
-          shouldShow = false;
+          return false;
         }
-      }
+        return true;
+      });
+    }
 
-      if (shouldShow) {
-        visibleCards.push(card);
-        card.style.display = "none"; // Initially hide all cards
-      } else {
-        card.style.display = "none";
-      }
-    });
-
-    // Sort visible cards
-    visibleCards.sort((a, b) => {
-      const priceA = parseFloat(a.getAttribute("data-precio") || "0");
-      const priceB = parseFloat(b.getAttribute("data-precio") || "0");
+    // Sort filtered motos
+    filteredMotos.sort((a, b) => {
+      const priceA =
+        a.currency.toLowerCase() === "sol" ? a.precio : a.price_dollar;
+      const priceB =
+        b.currency.toLowerCase() === "sol" ? b.precio : b.price_dollar;
       return filters.sort === "price_asc" ? priceA - priceB : priceB - priceA;
     });
 
     // Calculate pagination
-    const totalItems = visibleCards.length;
+    const totalItems = filteredMotos.length;
     const calculatedTotalPages = Math.ceil(totalItems / itemsPerPage);
     setTotalPages(calculatedTotalPages);
 
@@ -180,22 +177,9 @@ export default function MotoFiltersBar({
     // Apply pagination
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const motoGrid = document.getElementById("moto-grid");
+    const paginatedMotos = filteredMotos.slice(startIndex, endIndex);
 
-    if (motoGrid) {
-      // Limpiar el grid antes de repoblarlo
-      while (motoGrid.firstChild) {
-        motoGrid.removeChild(motoGrid.firstChild);
-      }
-
-      // Insertar solo los elementos visibles en la página actual
-      visibleCards.forEach((card, index) => {
-        if (index >= startIndex && index < endIndex) {
-          card.style.display = ""; // Asegurar que estén visibles
-          motoGrid.appendChild(card);
-        }
-      });
-    }
+    setMotos(paginatedMotos);
 
     setPendingFilters({
       price: false,
@@ -203,23 +187,23 @@ export default function MotoFiltersBar({
       performance: false,
       chips: false,
     });
-  };
+  }, [filters, initialMotos, currentPage, itemsPerPage]);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+  }, [totalPages]);
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = useCallback((value: string) => {
     setFilters((prev) => ({ ...prev, sort: value }));
     if (window.innerWidth < 1024) {
       setPendingFilters((prev) => ({ ...prev, chips: true }));
     }
-  };
+  }, []);
 
-  const handleBrandToggle = (brandName: string) => {
+  const handleBrandToggle = useCallback((brandName: string) => {
     setFilters((prev) => ({
       ...prev,
       brands: prev.brands.includes(brandName)
@@ -229,7 +213,7 @@ export default function MotoFiltersBar({
     if (window.innerWidth < 1024) {
       setPendingFilters((prev) => ({ ...prev, chips: true }));
     }
-  };
+  }, []);
 
   const handleCategoryToggle = (categoryName: string) => {
     setFilters((prev) => ({
@@ -313,18 +297,13 @@ export default function MotoFiltersBar({
       performance: false,
       chips: false,
     });
-
-    // Show all cards and reset sort order
-    const motoCards = document.querySelectorAll<HTMLElement>("[data-moto]");
-    motoCards.forEach((card) => {
-      card.style.display = "";
-    });
+    setMotos(initialMotos);
   };
 
-  const sortOptions = [
+  const sortOptions = useMemo(() => [
     { value: "price_desc", label: "Precio: Mayor a Menor" },
     { value: "price_asc", label: "Precio: Menor a Mayor" },
-  ];
+  ], []);
 
   const hasPendingFilters = () => {
     return Object.values(pendingFilters).some((value) => value);
@@ -344,7 +323,7 @@ export default function MotoFiltersBar({
   };
 
   // Componente de paginación
-  const Pagination = () => {
+  const Pagination = memo(() => {
     if (totalPages <= 1) return null;
 
     const pageNumbers = [];
@@ -459,7 +438,7 @@ export default function MotoFiltersBar({
         </button>
       </div>
     );
-  };
+  });
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
@@ -759,15 +738,14 @@ export default function MotoFiltersBar({
 
       {/* Main content area */}
       <div className="flex-1 pb-24">
-        {/* Grid container will be rendered here */}
-        <div
-          id="moto-grid"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {/* Moto cards will be rendered here */}
+        {/* Grid container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {motos.map((moto) => (
+            <MotoCard key={moto.idModelo} moto={moto} />
+          ))}
         </div>
 
-        {/* Pagination controls - now using the new Pagination component */}
+        {/* Pagination controls */}
         <Pagination />
       </div>
 
@@ -780,4 +758,6 @@ export default function MotoFiltersBar({
       )}
     </div>
   );
-}
+});
+
+export default MotoFiltersBar;

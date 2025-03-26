@@ -6,7 +6,6 @@ import { bannersService } from "../services/api/banners.service";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
-import MotoCard from "./moto/MotoCard.astro";
 import Layout from "../layouts/Layout.astro";
 import SearchBar from "./ui/SearchBar.astro";
 import MotoFiltersBar from "./MotoFiltersBar";
@@ -53,18 +52,11 @@ try {
     <SearchBar motos={initialMotos} />
     <div class="flex flex-col lg:flex-row gap-6">
       <MotoFiltersBar
-        client:load
+        client:idle
         initialBrands={brands}
         initialCategories={categories}
+        initialMotos={initialMotos}
       />
-      <div class="flex-1">
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          id="moto-grid"
-        >
-          {initialMotos.map((moto) => <MotoCard moto={moto} />)}
-        </div>
-      </div>
     </div>
   </div>
 </Layout>
