@@ -64,6 +64,7 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
       src={initialImage}
       alt={`${moto.marca} ${moto.modelo}`}
       class="h-56 w-auto relative mix-blend-multiply z-10 lg:h-80 xl:h-[420px] moto-image-transition"
+      style={{ viewTransitionName: `moto-${moto.idModelo}` }}
       fetchpriority="high"
       decoding="async"
       width="800"
@@ -99,9 +100,9 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
     height="80"
   />
   <div class="absolute top-5 left-12 hidden md:block xl:left-24">
-    <img 
-      src={moto.logo} 
-      alt={`Logo ${moto.marca}`} 
+    <img
+      src={moto.logo}
+      alt={`Logo ${moto.marca}`}
       class="w-20 h-20"
       loading="lazy"
       decoding="async"
@@ -111,3 +112,17 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
   </div>
 </header>
 
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .moto-image-transition {
+    animation: fadeIn 0.5s ease-out;
+  }
+</style>

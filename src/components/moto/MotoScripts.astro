@@ -31,21 +31,20 @@ const { initialData } = Astro.props;
       selectedColorId = colorId;
       const motoImage = document.querySelector("#moto-image");
       if (motoImage) {
-        // Add fade out effect
-        motoImage.classList.add("moto-image-fade");
-
-        // Wait for fade out to complete before changing image
-        setTimeout(() => {
-          const newImageSrc = getBannerImage();
-          const newImage = new Image();
-          newImage.src = newImageSrc;
-          
-          newImage.onload = () => {
-            motoImage.src = newImageSrc;
-            // Remove fade out effect after image loads
-            motoImage.classList.remove("moto-image-fade");
-          };
-        }, 500); // Increased duration for better visibility
+        // Remove existing animation
+        motoImage.style.animation = 'none';
+        motoImage.offsetHeight; // Trigger reflow
+        
+        // Add new fadeIn animation
+        motoImage.style.animation = 'fadeIn 0.5s ease-out';
+        
+        const newImageSrc = getBannerImage();
+        const newImage = new Image();
+        newImage.src = newImageSrc;
+        
+        newImage.onload = () => {
+          motoImage.src = newImageSrc;
+        };
       }
 
       // Update color button styles
@@ -121,13 +120,13 @@ const { initialData } = Astro.props;
 </script>
 
 <style>
-  .moto-image-transition {
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-  }
-
-  .moto-image-fade {
-    opacity: 0;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .color-select-btn {
