@@ -13,12 +13,9 @@ const {
   title,
   description = "Explora nuestra colección de motos de alta calidad. Encuentra la moto perfecta para ti con especificaciones detalladas y precios competitivos.",
   image = "/imgs/og-image.png",
-  canonicalURL = Astro.url || import.meta.env.PUBLIC_SITE_URL,
+  canonicalURL = import.meta.env.PUBLIC_SITE_URL,
   type = "website",
 } = Astro.props;
-
-// Get the base URL from environment or fallback to the current URL
-const baseUrl = import.meta.env.PUBLIC_SITE_URL || Astro.url.origin;
 ---
 
 <!doctype html>
@@ -27,7 +24,6 @@ const baseUrl = import.meta.env.PUBLIC_SITE_URL || Astro.url.origin;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/png" href="/fav.png" />
-    <meta name="generator" content={Astro.generator} />
 
     <!-- Performance optimizations -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
