@@ -83,7 +83,7 @@ const initialData = {
 
 // Prepare SEO metadata
 const title = `${moto.marca} ${moto.modelo} - Precio y Especificaciones`;
-const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.precio)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Encuentra especificaciones técnicas detalladas y galería de imágenes.`;
+const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Encuentra especificaciones técnicas detalladas y galería de imágenes.`;
 const mainImage = bannerImages[0]?.imagen || "/imgs/moto.png";
 
 // Prepare LCP image for preload
@@ -113,7 +113,10 @@ const lcpImage = getInitialBannerImage();
       },
       offers: {
         "@type": "Offer",
-        price: moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar,
+        price:
+          moto.currency.toLowerCase() === "sol"
+            ? moto.precio
+            : moto.price_dollar,
         priceCurrency: moto.currency.toLowerCase() === "sol" ? "PEN" : "USD",
         availability: "https://schema.org/InStock",
       },
