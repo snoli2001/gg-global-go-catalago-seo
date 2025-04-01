@@ -12,14 +12,10 @@ interface Props {
 const {
   title,
   description = "Explora nuestra colección de motos de alta calidad. Encuentra la moto perfecta para ti con especificaciones detalladas y precios competitivos.",
-  image = "/images/og-image.png",
+  image = "/imgs/og-image.png",
   canonicalURL = Astro.url,
   type = "website",
 } = Astro.props;
-
-// Get the base URL from environment or fallback to the current URL
-const baseUrl = import.meta.env.PUBLIC_SITE_URL || Astro.url.origin;
-const canonicalUrl = new URL(canonicalURL, baseUrl).toString();
 ---
 
 <!doctype html>
@@ -42,21 +38,21 @@ const canonicalUrl = new URL(canonicalURL, baseUrl).toString();
     <meta name="description" content={description} />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href={canonicalUrl} />
+    <link rel="canonical" href={canonicalURL} />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, baseUrl)} />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, baseUrl)} />
+    <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
     <!-- Performance Meta Tags -->
     <meta http-equiv="x-dns-prefetch-control" content="on" />
