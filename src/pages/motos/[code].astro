@@ -184,15 +184,15 @@ const lcpImage = getInitialBannerImage();
   </body>
 </Layout>
 
-<script>
+<script define:vars={{ initialData }}>
   // Handle financing button clicks
   document.querySelectorAll("[data-financing-button]").forEach((button) => {
     button.addEventListener("click", () => {
       const colors = JSON.parse(button.getAttribute("data-colors") || "[]");
       if (colors.length === 1) {
         // If there's only one color, redirect directly
-        const motoCode = document.body.dataset.motoCode;
-        const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
+        const motoCode = initialData.motoCode;
+        const financingUrl = initialData.financingUrl;
         const url = `${financingUrl}?codigoMoto=${motoCode}_${colors[0].color_id}`;
 
         try {
@@ -209,7 +209,7 @@ const lcpImage = getInitialBannerImage();
         }
       } else {
         // Show color selection modal
-        (window as any).showColorSelectionModal();
+        window.showColorSelectionModal();
       }
     });
   });
