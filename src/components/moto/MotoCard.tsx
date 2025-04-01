@@ -186,7 +186,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
                 ? formatPrice(moto.precio, "sol")
                 : formatPrice(moto.price_dollar, "usd")}
             </span>
-            <span className="text-gg-red-600 font-medium flex items-center gap-1">
+            {/* <span className="text-gg-red-600 font-medium flex items-center gap-1">
               Desde{" "}
               {formatPrice(
                 calculateMonthlyPayment(
@@ -199,7 +199,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
                 moto.currency.toLowerCase()
               )}{" "}
               semanales
-            </span>
+            </span> */}
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
