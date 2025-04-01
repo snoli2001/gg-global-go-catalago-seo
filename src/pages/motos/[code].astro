@@ -192,7 +192,7 @@ const lcpImage = getInitialBannerImage();
       if (colors.length === 1) {
         // If there's only one color, redirect directly
         const motoCode = initialData.motoCode;
-        const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
+        const financingUrl = initialData.financingUrl;
         const url = `${financingUrl}?codigoMoto=${motoCode}_${colors[0].color_id}`;
 
         try {
