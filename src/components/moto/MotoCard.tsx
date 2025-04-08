@@ -189,7 +189,6 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
             </span>
             <div className="flex items-center gap-1.5">
               {moto.colores
-                .filter((color: Color) => hasColorImage(moto, color.color_id))
                 .map((color: Color) => (
                   <div key={color.color_id} className="pointer-events-none">
                     <ColorCircle color={color} />
