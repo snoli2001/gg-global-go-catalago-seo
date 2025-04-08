@@ -7,16 +7,17 @@ interface MotoCardProps {
 }
 
 const formatPrice = (price: number, currency: string): string => {
-  if (currency.toLowerCase() === "sol") {
-    return new Intl.NumberFormat("es-PE", {
-      style: "currency",
-      currency: "PEN",
-    }).format(price);
-  }
-  return new Intl.NumberFormat("en-US", {
+  const options: Intl.NumberFormatOptions = {
     style: "currency",
-    currency: "USD",
-  }).format(price);
+    currency: currency.toLowerCase() === "sol" ? "PEN" : "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  };
+
+  if (currency.toLowerCase() === "sol") {
+    return new Intl.NumberFormat("es-PE", options).format(price);
+  }
+  return new Intl.NumberFormat("en-US", options).format(price);
 };
 
 const hasColorImage = (moto: Moto, colorId: number): boolean => {
@@ -57,7 +58,7 @@ const calculateMonthlyPayment = (
   const monthlyRate = annualInterestRate / 52 / 100;
   const numerator = monthlyRate * Math.pow(1 + monthlyRate, months);
   const denominator = Math.pow(1 + monthlyRate, months) - 1;
-  return price * (numerator / denominator);
+  return Math.ceil(price * (numerator / denominator));
 };
 
 const getCategoryClass = (categoria: string): string => {
@@ -179,29 +180,13 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
           </strong>
         </div>
 
-        <div className="flex justify-between items-center py-1">
-          <div className="flex flex-col">
+        <div className="flex flex-col">
+          <div className="flex justify-between items-center">
             <span className="text-2xl font-medium text-gg-blue-700">
               {moto.currency.toLowerCase() === "sol"
                 ? formatPrice(moto.precio, "sol")
                 : formatPrice(moto.price_dollar, "usd")}
             </span>
-            <span className="text-gg-red-600 font-medium flex items-center gap-1">
-              Desde{" "}
-              {formatPrice(
-                calculateMonthlyPayment(
-                  moto.currency.toLowerCase() === "sol"
-                    ? moto.precio
-                    : moto.price_dollar,
-                  75,
-                  52
-                ),
-                moto.currency.toLowerCase()
-              )}{" "}
-              semanales
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
               {moto.colores
                 .filter((color: Color) => hasColorImage(moto, color.color_id))
@@ -212,6 +197,38 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
                 ))}
             </div>
           </div>
+          <span className="text-xl text-emerald-600 font-medium flex items-center gap-1 mt-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="icon icon-tabler icons-tabler-outline icon-tabler-rosette-discount"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M9 15l6 -6" />
+              <circle cx="9.5" cy="9.5" r=".5" fill="currentColor" />
+              <circle cx="14.5" cy="14.5" r=".5" fill="currentColor" />
+              <path d="M5 7.2a2.2 2.2 0 0 1 2.2 -2.2h1a2.2 2.2 0 0 0 1.55 -.64l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7a2.2 2.2 0 0 0 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1a2.2 2.2 0 0 0 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.64 1.55v1a2.2 2.2 0 0 1 -2.2 2.2h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1" />
+            </svg>
+            Desde{" "}
+            {formatPrice(
+              calculateMonthlyPayment(
+                moto.currency.toLowerCase() === "sol"
+                  ? moto.precio
+                  : moto.price_dollar,
+                75,
+                52
+              ),
+              moto.currency.toLowerCase()
+            )}{" "}
+            semanales
+          </span>
         </div>
       </section>
 
