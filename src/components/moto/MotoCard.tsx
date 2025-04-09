@@ -196,7 +196,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
                 ))}
             </div>
           </div>
-          <span className="text-xl text-emerald-600 font-medium flex items-center gap-1 mt-1">
+          {/* <span className="text-xl text-emerald-600 font-medium flex items-center gap-1 mt-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -227,7 +227,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
               moto.currency.toLowerCase()
             )}{" "}
             semanales
-          </span>
+          </span> */}
         </div>
       </section>
 
