@@ -82,12 +82,38 @@ const initialData = {
 };
 
 // Prepare SEO metadata
-const title = `${moto.marca} ${moto.modelo} - Precio y Especificaciones`;
-const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Encuentra especificaciones técnicas detalladas y galería de imágenes.`;
+const title = `${moto.marca} ${moto.modelo} - Precio, Especificaciones y Financiamiento | Global Go`;
+const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Especificaciones técnicas detalladas, galería de imágenes, videos y opciones de financiamiento disponibles. ¡Encuentra tu próxima moto en Global Go!`;
 const mainImage = bannerImages[0]?.imagen || "/imgs/moto.png";
 
 // Prepare LCP image for preload
 const lcpImage = getInitialBannerImage();
+
+// Prepare breadcrumb data
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": import.meta.env.PUBLIC_SITE_URL
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Catálogo de Motos",
+      "item": `${import.meta.env.PUBLIC_SITE_URL}/motos`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": `${moto.marca} ${moto.modelo}`,
+      "item": `${import.meta.env.PUBLIC_SITE_URL}/motos/${moto.code}`
+    }
+  ]
+};
 ---
 
 <Layout
@@ -100,34 +126,50 @@ const lcpImage = getInitialBannerImage();
   <!-- Preload LCP image -->
   <link rel="preload" href={lcpImage} as="image" fetchpriority="high" />
 
-  <script
-    type="application/ld+json"
-    set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Product",
-      name: `${moto.marca} ${moto.modelo}`,
-      image: mainImage,
-      description: description,
-      brand: {
-        "@type": "Brand",
-        name: moto.marca,
-      },
-      offers: {
-        "@type": "Offer",
-        price:
-          moto.currency.toLowerCase() === "sol"
-            ? moto.precio
-            : moto.price_dollar,
-        priceCurrency: moto.currency.toLowerCase() === "sol" ? "PEN" : "USD",
-        availability: "https://schema.org/InStock",
-      },
-    })}
-  />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": `${moto.marca} ${moto.modelo}`,
+    "image": mainImage,
+    "description": description,
+    "brand": {
+      "@type": "Brand",
+      "name": moto.marca
+    },
+    "model": moto.modelo,
+    "manufacturer": {
+      "@type": "Organization",
+      "name": moto.marca
+    },
+    "category": "Motocicletas",
+    "offers": {
+      "@type": "Offer",
+      "price": moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar,
+      "priceCurrency": moto.currency.toLowerCase() === "sol" ? "PEN" : "USD",
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "Global Go"
+      }
+    }
+  })} />
 
-  <meta
-    name="keywords"
-    content={`moto, ${moto.marca}, ${moto.modelo}, motocicleta, venta de motos`}
-  />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbData)} />
+
+  <meta name="keywords" content={`moto, ${moto.marca}, ${moto.modelo}, motocicleta, venta de motos, precio moto ${moto.marca} ${moto.modelo}, especificaciones ${moto.marca} ${moto.modelo}, financiamiento motos`} />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="es" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="author" content="Global Go" />
+  <meta property="og:type" content="product" />
+  <meta property="og:price:amount" content={String(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} />
+  <meta property="og:price:currency" content={moto.currency.toLowerCase() === "sol" ? "PEN" : "USD"} />
+  <meta property="product:price:amount" content={String(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} />
+  <meta property="product:price:currency" content={moto.currency.toLowerCase() === "sol" ? "PEN" : "USD"} />
+  <meta property="product:availability" content="in stock" />
+  <meta property="product:condition" content="new" />
+  <meta property="product:brand" content={moto.marca} />
+  <meta property="product:category" content="Motocicletas" />
 
   <MotoScripts initialData={initialData} />
 

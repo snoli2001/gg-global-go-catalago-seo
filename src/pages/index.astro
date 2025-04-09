@@ -1,15 +1,80 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import MotoDataFetcher from "../components/MotoDataFetcher.astro";
+
+const title = "Catálogo de Motos | Global Go - Encuentra tu moto ideal";
+const description = "Explora nuestro catálogo completo de motos. Encuentra la moto perfecta para ti con especificaciones detalladas, precios y financiamiento disponible. Las mejores marcas y modelos en un solo lugar.";
+
+// FAQ Schema data
+const faqData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Cómo funciona el financiamiento de motos en Global Go?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El proceso de financiamiento en Global Go es sencillo. Solo necesitas seleccionar la moto que deseas comprar y solicitar el financiamiento. Ofrecemos cuotas semanales flexibles para adaptarnos a tus necesidades."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué opciones de pago ofrecen para el financiamiento?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "En Global Go ofrecemos cuotas semanales para hacer más accesible la compra de tu moto. Esto te permite distribuir el pago de manera más conveniente y adaptada a tu presupuesto semanal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué necesito para solicitar el financiamiento de una moto?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El proceso es simple: primero selecciona la moto que deseas comprar en nuestro catálogo, luego solicita el financiamiento y nuestro equipo te guiará en todo el proceso. No necesitas trámites complicados, solo elegir tu moto ideal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Puedo ver las opciones de financiamiento antes de comprar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí, al seleccionar cualquier moto en nuestro catálogo, podrás ver las opciones de financiamiento disponibles, incluyendo las cuotas semanales y los términos del financiamiento."
+      }
+    }
+  ]
+};
 ---
 
 <Layout
-  title="Catalogo de motos | Global Go"
-  image={new URL(
-    "/imgs/og-image.png",
-    import.meta.env.PUBLIC_SITE_URL
-  ).toString()}
+  title={title}
+  description={description}
+  image={new URL("/imgs/og-image.png", import.meta.env.PUBLIC_SITE_URL).toString()}
   canonicalURL={import.meta.env.PUBLIC_SITE_URL}
 >
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Global Go Catálogo de Motos",
+    "url": import.meta.env.PUBLIC_SITE_URL,
+    "description": description,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${import.meta.env.PUBLIC_SITE_URL}/motos?search={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqData)} />
+
+  <meta name="keywords" content="catálogo de motos, venta de motos, motocicletas, motos nuevas, financiamiento de motos, Global Go, cuotas semanales, financiamiento motos" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="es" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="author" content="Global Go" />
+
   <MotoDataFetcher />
 </Layout>
