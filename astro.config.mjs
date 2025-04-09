@@ -13,22 +13,33 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      filter: (page) => {
-        // Solo incluir páginas en producción y solo de la URL principal
-        if (import.meta.env.PROD) {
-          return page.includes("https://catalogo.globalgo.com.pe/");
-        }
-        return false;
-      },
-      changefreq: "weekly",
+      changefreq: "daily",
       priority: 0.7,
       lastmod: new Date(),
+      entryLimit: 10000,
+      filter: (page) => {
+        // Excluir páginas que no queremos en el sitemap
+        const excludedPaths = ["/404", "/error"];
+        return !excludedPaths.some(path => page.includes(path));
+      },
+      customPages: [
+        "https://catalogo.globalgo.com.pe/",
+        "https://catalogo.globalgo.com.pe/motos",
+      ],
       serialize: (item) => {
-        // Personalizar la serialización de cada URL
+        // Personalizar la prioridad según la ruta
+        let priority = 0.7;
+        
+        if (item.url === "https://catalogo.globalgo.com.pe/") {
+          priority = 1.0;
+        } else if (item.url.includes("/motos/")) {
+          priority = 0.8;
+        }
+
         return {
-          ...item,
-          // Asegurarse de que solo se incluyan URLs de la ruta principal
-          url: item.url.replace(/^https?:\/\/[^/]+/, "https://catalogo.globalgo.com.pe"),
+          url: item.url,
+          priority,
+          lastmod: new Date().toISOString()
         };
       },
     }),
