@@ -5,6 +5,7 @@ interface Banner {
   url: string;
   code: string;
   description: string;
+  urlMobile: string;
 }
 
 interface BannerCarouselProps {
@@ -69,7 +70,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
   return (
     <div
-      className="relative w-full h-[250px] md:h-[300px] overflow-hidden md:rounded-lg"
+      className="relative w-full h-[250px] md:h-[450px] overflow-hidden md:rounded-lg"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -125,12 +126,15 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
             className="w-full h-full flex-shrink-0 relative bg-gray-100"
           >
             {loadedImages.has(index) ? (
-              <img
-                src={banner.url}
-                alt={banner.description}
-                className="w-full h-full object-fill lg:object-cover"
-                style={{ opacity: 1, transition: 'opacity 0.3s ease-in-out' }}
-              />
+              <picture>
+                <source media="(max-width: 768px)" srcSet={banner.urlMobile} />
+                <img
+                  src={banner.url}  
+                  alt={banner.description}
+                  className="w-full h-full object-fill lg:object-fill"
+                  style={{ opacity: 1, transition: 'opacity 0.3s ease-in-out' }}
+                />
+              </picture>
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gg-blue-500"></div>
