@@ -30,3 +30,7 @@ yarn-error.log*
 
 # Astro
 .astro/
+.dist/
+
+#vercel
+.vercel/
