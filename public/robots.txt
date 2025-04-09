@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://catalogo.globalgo.com.pe/sitemap.xml 
+Sitemap: https://catalogo.globalgo.com.pe/sitemap-index.xml
