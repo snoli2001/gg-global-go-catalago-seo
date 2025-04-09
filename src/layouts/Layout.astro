@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
 
 interface Props {
   title: string;
@@ -16,8 +17,6 @@ const {
   canonicalURL = import.meta.env.PUBLIC_SITE_URL,
   type = "website",
 } = Astro.props;
-
-import Analytics from '@vercel/analytics/astro'
 ---
 
 <!doctype html>
