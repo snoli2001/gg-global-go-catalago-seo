@@ -16,6 +16,8 @@ const {
   canonicalURL = import.meta.env.PUBLIC_SITE_URL,
   type = "website",
 } = Astro.props;
+
+import Analytics from '@vercel/analytics/astro'
 ---
 
 <!doctype html>
@@ -61,5 +63,6 @@ const {
   </head>
   <body class="bg-gray-50">
     <slot />
+    {import.meta.env.PROD && <Analytics />}
   </body>
 </html>
