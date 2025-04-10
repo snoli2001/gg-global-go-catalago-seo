@@ -470,7 +470,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
       {/* Filtros */}
       <aside
         className={`
-          fixed lg:static inset-y-0 left-0 w-full lg:w-72 bg-white shadow-lg lg:shadow z-50
+          fixed lg:static inset-y-0 left-0 w-full lg:w-72 bg-white shadow-lg lg:shadow z-50 lg:z-0
           transform transition-transform duration-300 ease-in-out
           ${
             isFilterPanelOpen
