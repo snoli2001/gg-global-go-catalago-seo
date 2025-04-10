@@ -25,7 +25,13 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/fav.png" />
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#116ACC" />
+    
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Performance optimizations -->
@@ -48,6 +54,7 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
+    <meta property="og:site_name" content="Global Go" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -58,7 +65,6 @@ const {
 
     <!-- Performance Meta Tags -->
     <meta http-equiv="x-dns-prefetch-control" content="on" />
-    <meta name="theme-color" content="#ffffff" />
     <meta name="color-scheme" content="light" />
   </head>
   <body class="bg-gray-50">
