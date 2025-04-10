@@ -154,6 +154,8 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
             src={getBannerImage(moto)}
             alt={`Moto ${moto.marca} ${moto.modelo}`}
             loading="lazy"
+            width={400}
+            height={300}
             className="object-contain w-full h-auto transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3"
             style={{ viewTransitionName: `moto-${moto.idModelo}` }}
           />
@@ -167,7 +169,9 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
             alt={moto.marca}
             loading="lazy"
             decoding="async"
-            className="w-12 h-auto"
+            width={48}
+            height={48}
+            className="w-12 h-auto group-hover:scale-110"
             style={{ viewTransitionName: `moto-marca-${moto.idModelo}` }}
           />
         </div>
