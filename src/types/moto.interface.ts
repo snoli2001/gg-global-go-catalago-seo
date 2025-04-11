@@ -50,4 +50,5 @@ export interface Moto {
   video: string;
   code: string;
   price_dollar: number;
+  fee_amount: number;
 } 

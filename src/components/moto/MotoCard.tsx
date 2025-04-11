@@ -9,7 +9,7 @@ interface MotoCardProps {
 const formatPrice = (price: number, currency: string): string => {
   const options: Intl.NumberFormatOptions = {
     style: "currency",
-    currency: currency.toLowerCase() === "sol" ? "PEN" : "USD",
+    currency: "PEN",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   };
@@ -192,12 +192,11 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
                 : formatPrice(moto.price_dollar, "usd")}
             </span>
             <div className="flex items-center gap-1.5">
-              {moto.colores
-                .map((color: Color) => (
-                  <div key={color.color_id} className="pointer-events-none">
-                    <ColorCircle color={color} />
-                  </div>
-                ))}
+              {moto.colores.map((color: Color) => (
+                <div key={color.color_id} className="pointer-events-none">
+                  <ColorCircle color={color} />
+                </div>
+              ))}
             </div>
           </div>
           <span className="text-xl text-emerald-600 font-medium flex items-center gap-1 mt-1">
@@ -219,18 +218,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
               <circle cx="14.5" cy="14.5" r=".5" fill="currentColor" />
               <path d="M5 7.2a2.2 2.2 0 0 1 2.2 -2.2h1a2.2 2.2 0 0 0 1.55 -.64l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7a2.2 2.2 0 0 0 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1a2.2 2.2 0 0 0 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.64 1.55v1a2.2 2.2 0 0 1 -2.2 2.2h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1" />
             </svg>
-            Desde{" "}
-            {formatPrice(
-              calculateMonthlyPayment(
-                moto.currency.toLowerCase() === "sol"
-                  ? moto.precio
-                  : moto.price_dollar,
-                75,
-                52
-              ),
-              moto.currency.toLowerCase()
-            )}{" "}
-            semanales
+            Desde {formatPrice(Number(moto.fee_amount), "sol")} semanales
           </span>
         </div>
       </section>
