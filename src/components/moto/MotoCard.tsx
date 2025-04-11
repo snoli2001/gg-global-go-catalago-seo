@@ -9,7 +9,7 @@ interface MotoCardProps {
 const formatPrice = (price: number, currency: string): string => {
   const options: Intl.NumberFormatOptions = {
     style: "currency",
-    currency: "PEN",
+    currency: currency.toLowerCase() === "sol" ? "PEN" : "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   };
