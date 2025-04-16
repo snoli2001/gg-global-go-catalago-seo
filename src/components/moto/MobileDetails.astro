@@ -23,8 +23,6 @@ const { moto, formatPrice } = Astro.props;
       }
     </strong>
     {
-      moto.currency.toLowerCase() === "dolar" && (
-        <>
           <span class="text-xs block text-gray-500">
             T.C. Referencial: S/ 3.82
           </span>
@@ -52,8 +50,6 @@ const { moto, formatPrice } = Astro.props;
             </svg>
             Desde S/ {formatPrice(Number(moto.fee_amount))} semanales
           </span>
-        </>
-      )
     }
   </div>
   <p class="text-sm text-primary-text">{moto.texto}</p>
