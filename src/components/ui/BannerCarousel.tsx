@@ -70,7 +70,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 
   return (
     <div
-      className="relative w-full h-[250px] md:h-[450px] overflow-hidden md:rounded-lg"
+      className="relative w-full h-[250px] md:h-[400px] overflow-hidden md:rounded-lg"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
