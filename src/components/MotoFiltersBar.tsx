@@ -15,6 +15,7 @@ interface FilterState {
   categories: string[];
   displacement: { min: string; max: string };
   performance: { min: string; max: string };
+  isPreOwned: boolean | null; // null means "all"
 }
 
 interface MotoFiltersBarProps {
@@ -22,6 +23,7 @@ interface MotoFiltersBarProps {
   initialCategories: Category[];
   initialMotos: Moto[];
   itemsPerPage?: number;
+  hideTabsInDesktop?: boolean;
 }
 
 const MotoFiltersBar = memo(function MotoFiltersBar({
@@ -29,6 +31,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   initialCategories,
   initialMotos,
   itemsPerPage = 12,
+  hideTabsInDesktop = false,
 }: MotoFiltersBarProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
@@ -36,6 +39,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [activeTab, setActiveTab] = useState<'all' | 'new' | 'used'>('all');
   const [pendingFilters, setPendingFilters] = useState<{
     price: boolean;
     displacement: boolean;
@@ -55,7 +59,19 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
     categories: [],
     displacement: { min: "", max: "" },
     performance: { min: "", max: "" },
+    isPreOwned: null,
   });
+
+  // Update isPreOwned filter when tab changes
+  useEffect(() => {
+    if (activeTab === 'new') {
+      setFilters(prev => ({ ...prev, isPreOwned: false }));
+    } else if (activeTab === 'used') {
+      setFilters(prev => ({ ...prev, isPreOwned: true }));
+    } else {
+      setFilters(prev => ({ ...prev, isPreOwned: null }));
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     // Solo aplicar filtros automáticamente para chips y ordenamiento en desktop
@@ -67,12 +83,32 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
     ) {
       applyFilters();
     }
-  }, [filters.brands, filters.transmission, filters.categories, filters.sort]);
+  }, [filters.brands, filters.transmission, filters.categories, filters.sort, filters.isPreOwned]);
 
   useEffect(() => {
     // Aplicar filtros cuando cambie la página
     applyFilters();
   }, [currentPage]);
+
+  // Listen for tab change events from parent
+  useEffect(() => {
+    const handleTabChange = (event: CustomEvent<{ tab: string }>) => {
+      const tab = event.detail.tab as 'all' | 'new' | 'used';
+      setActiveTab(tab);
+    };
+
+    window.addEventListener('tabChange', handleTabChange as EventListener);
+    return () => {
+      window.removeEventListener('tabChange', handleTabChange as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      applyFilters();
+    }
+    // eslint-disable-next-line
+  }, [filters.isPreOwned]);
 
   const applyFilters = useCallback(() => {
     let filteredMotos = [...initialMotos];
@@ -153,6 +189,13 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
         }
         return true;
       });
+    }
+
+    // Apply pre-owned filter
+    if (filters.isPreOwned !== null) {
+      filteredMotos = filteredMotos.filter((moto) => 
+        moto.isPreOwned === filters.isPreOwned
+      );
     }
 
     // Sort filtered motos
@@ -275,7 +318,8 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
       filters.displacement.max !== "" ||
       filters.performance.min !== "" ||
       filters.performance.max !== "" ||
-      filters.sort !== "price_asc"
+      filters.sort !== "price_asc" ||
+      filters.isPreOwned !== null
     );
   };
 
@@ -290,6 +334,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
       categories: [],
       displacement: { min: "", max: "" },
       performance: { min: "", max: "" },
+      isPreOwned: null,
     });
     setPendingFilters({
       price: false,
@@ -297,6 +342,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
       performance: false,
       chips: false,
     });
+    setActiveTab('all');
     setMotos(initialMotos);
   };
 
@@ -441,13 +487,47 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   });
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      {/* Botón de filtros para móvil */}
-      <div className="lg:hidden flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semimedium">Catálogo de Motos</h2>
+    <div className="flex flex-col lg:flex-row gap-6" data-moto-filters>
+
+      {/* Botón de filtros y tabs para móvil */}
+      <div className="lg:hidden flex items-center gap-4 mb-6">
+        <div className="flex-1 bg-white rounded-lg shadow p-2">
+          <div className="flex rounded-md overflow-hidden">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                activeTab === 'all'
+                  ? 'bg-gg-blue-700 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:enabled:bg-gray-200'
+              }`}
+            >
+              Todas
+            </button>
+            <button
+              onClick={() => setActiveTab('new')}
+              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                activeTab === 'new'
+                  ? 'bg-gg-blue-700 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:enabled:bg-gray-200'
+              }`}
+            >
+              Nuevas
+            </button>
+            <button
+              onClick={() => setActiveTab('used')}
+              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                activeTab === 'used'
+                  ? 'bg-gg-blue-700 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:enabled:bg-gray-200'
+              }`}
+            >
+              Seminuevas
+            </button>
+          </div>
+        </div>
         <button
           onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
-          className="flex items-center gap-2 px-4 py-2 bg-gg-blue-700 text-white rounded-lg hover:bg-gg-blue-800 transition-colors"
+          className="flex items-center gap-2 p-4 bg-gg-blue-700 text-white rounded-lg hover:bg-gg-blue-800 transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -455,7 +535,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
+            className="w-7 h-7"
           >
             <path
               strokeLinecap="round"
@@ -463,10 +543,9 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
               d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
             />
           </svg>
-          Filtros
         </button>
       </div>
-
+              
       {/* Filtros */}
       <aside
         className={`
@@ -738,6 +817,20 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
 
       {/* Main content area */}
       <div className="flex-1 pb-24">
+        {/* Section title */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold">
+            {activeTab === 'new' ? 'Motos Nuevas' : 
+             activeTab === 'used' ? 'Motos Seminuevas' : 
+             'Catálogo de Motos'}
+          </h2>
+          <p className="text-gray-600">
+            {activeTab === 'new' ? 'Descubre nuestra selección de motos nuevas' : 
+             activeTab === 'used' ? 'Encuentra motos seminuevas en excelente estado' : 
+             'Explora nuestro catálogo completo de motos'}
+          </p>
+        </div>
+
         {/* Grid container */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {motos.map((moto) => (

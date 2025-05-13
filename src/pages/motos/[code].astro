@@ -16,10 +16,14 @@ export const prerender = true;
 // Generate all possible paths at build time
 export async function getStaticPaths() {
   const motos = await motoService.getMotos();
-  return motos.map((moto: Moto) => ({
-    params: { code: moto.code },
-    props: { moto },
-  }));
+  return motos.map((moto: Moto) => {
+    // Si es una moto de segunda mano y tiene motorcycle_id_key, usar ese valor como código
+    const paramCode = moto.isPreOwned && moto.motorcycle_id_key ? moto.motorcycle_id_key : moto.code;
+    return {
+      params: { code: paramCode },
+      props: { moto }
+    };
+  });
 }
 
 // Get the motorcycle data from props
@@ -82,9 +86,13 @@ const initialData = {
 };
 
 // Prepare SEO metadata
-const title = `${moto.marca} ${moto.modelo} - Precio, Especificaciones y Financiamiento | Global Go`;
-const description = `Descubre la ${moto.marca} ${moto.modelo}. Precio: ${formatPrice(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Especificaciones técnicas detalladas, galería de imágenes, videos y opciones de financiamiento disponibles. ¡Encuentra tu próxima moto en Global Go!`;
+const title = `${moto.marca} ${moto.modelo}${moto.isPreOwned ? ' Seminueva' : ''} - Precio, Especificaciones y Financiamiento | Global Go`;
+const usedKmFormatted = moto.usedKilometers ? `Con ${moto.usedKilometers.toLocaleString()} km. ` : '';
+const description = `Descubre la ${moto.marca} ${moto.modelo}${moto.isPreOwned ? ' Seminueva' : ''}. ${moto.isPreOwned ? usedKmFormatted : ''}Precio: ${formatPrice(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Especificaciones técnicas detalladas, galería de imágenes, videos y opciones de financiamiento disponibles. ¡Encuentra tu próxima moto en Global Go!`;
 const mainImage = bannerImages[0]?.imagen || "/imgs/moto.png";
+
+// Determine the correct URL path
+const motoUrlPath = moto.isPreOwned && moto.motorcycle_id_key ? moto.motorcycle_id_key : moto.code;
 
 // Prepare LCP image for preload
 const lcpImage = getInitialBannerImage();
@@ -110,7 +118,7 @@ const breadcrumbData = {
       "@type": "ListItem",
       "position": 3,
       "name": `${moto.marca} ${moto.modelo}`,
-      "item": `${import.meta.env.PUBLIC_SITE_URL}/motos/${moto.code}`
+      "item": `${import.meta.env.PUBLIC_SITE_URL}/motos/${motoUrlPath}`
     }
   ]
 };
@@ -120,7 +128,7 @@ const breadcrumbData = {
   title={title}
   description={description}
   image={mainImage}
-  canonicalURL={`${import.meta.env.PUBLIC_SITE_URL}/motos/${moto.code}`}
+  canonicalURL={`${import.meta.env.PUBLIC_SITE_URL}/motos/${motoUrlPath}`}
   type="product"
 >
   <!-- Preload LCP image -->
@@ -150,13 +158,21 @@ const breadcrumbData = {
       "seller": {
         "@type": "Organization",
         "name": "Global Go"
+      },
+      "itemCondition": moto.isPreOwned ? "https://schema.org/UsedCondition" : "https://schema.org/NewCondition"
+    },
+    ...(moto.isPreOwned && moto.usedKilometers ? {
+      "mileageFromOdometer": {
+        "@type": "QuantitativeValue",
+        "value": moto.usedKilometers,
+        "unitCode": "KMT"
       }
-    }
+    } : {})
   })} />
 
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbData)} />
 
-  <meta name="keywords" content={`moto, ${moto.marca}, ${moto.modelo}, motocicleta, venta de motos, precio moto ${moto.marca} ${moto.modelo}, especificaciones ${moto.marca} ${moto.modelo}, financiamiento motos`} />
+  <meta name="keywords" content={`moto, ${moto.marca}, ${moto.modelo}, ${moto.isPreOwned ? 'moto seminueva, moto usada, segunda mano, ' : ''}motocicleta, venta de motos, precio moto ${moto.marca} ${moto.modelo}, especificaciones ${moto.marca} ${moto.modelo}, financiamiento motos`} />
   <meta name="robots" content="index, follow" />
   <meta name="language" content="es" />
   <meta name="revisit-after" content="7 days" />
@@ -167,9 +183,10 @@ const breadcrumbData = {
   <meta property="product:price:amount" content={String(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} />
   <meta property="product:price:currency" content={moto.currency.toLowerCase() === "sol" ? "PEN" : "USD"} />
   <meta property="product:availability" content="in stock" />
-  <meta property="product:condition" content="new" />
+  <meta property="product:condition" content={moto.isPreOwned ? "used" : "new"} />
   <meta property="product:brand" content={moto.marca} />
   <meta property="product:category" content="Motocicletas" />
+  {moto.isPreOwned && moto.usedKilometers && <meta property="product:mileage" content={String(moto.usedKilometers)} />}
 
   <MotoScripts initialData={initialData} />
 
@@ -188,6 +205,57 @@ const breadcrumbData = {
     <ColorSelector colors={moto.colores} hasColorImage={hasColorImage} />
 
     <MobileDetails moto={moto} formatPrice={formatPrice} />
+
+    {moto.isPreOwned && (
+      <section class="container mx-auto px-4 py-6 border-t border-stroke mt-4">
+        <div class="bg-blue-50 rounded-lg p-4 md:p-6">
+          <h2 class="text-xl md:text-2xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Información de la moto seminueva
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-white p-4 rounded-lg border border-blue-200">
+              <h3 class="text-lg font-medium text-blue-700 mb-1">Kilometraje</h3>
+              <p class="text-2xl font-bold text-gray-800">
+                {moto.usedKilometers 
+                  ? `${moto.usedKilometers.toLocaleString()} km` 
+                  : 'No disponible'}
+              </p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-blue-200">
+              <h3 class="text-lg font-medium text-blue-700 mb-1">Tiempo de uso</h3>
+              <p class="text-2xl font-bold text-gray-800">
+                {moto.usedTimeMonths
+                  ? `${moto.usedTimeMonths} ${moto.usedTimeMonths === 1 ? 'mes' : 'meses'}`
+                  : 'No disponible'}
+              </p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-blue-200">
+              <h3 class="text-lg font-medium text-blue-700 mb-1">Modelo</h3>
+              <p class="text-2xl font-bold text-gray-800">
+                {moto.modelYear || 'No disponible'}
+              </p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-blue-200 md:col-span-3">
+              <h3 class="text-lg font-medium text-blue-700 mb-1">Detalles adicionales</h3>
+              <p class="text-gray-700">
+                {moto.usedDetails || 'Esta moto se encuentra en excelentes condiciones y ha recibido mantenimiento regular.'}
+              </p>
+            </div>
+          </div>
+          <div class="bg-blue-100 p-3 rounded-lg text-blue-800 text-sm border border-blue-300">
+            <p class="flex flex-col md:flex-row items-center gap-2 text-center md:text-left">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-2 md:mb-0 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Todas nuestras motos seminuevas pasan por un riguroso proceso de inspección y certificación antes de ser puestas a la venta.
+            </p>
+          </div>
+        </div>
+      </section>
+    )}
 
     <section class="container mx-auto px-4 py-8">
       <h2 class="text-2xl font-bold mb-6">Especificaciones técnicas</h2>
@@ -215,20 +283,24 @@ const breadcrumbData = {
       getVideoEmbedUrl={getVideoEmbedUrl}
     />
 
-    <ColorSelectionModal colors={moto.colores} motoCode={moto.code} />
+    <ColorSelectionModal 
+      colors={moto.colores} 
+      motoCode={moto.code}
+      motorcycle_id_key={moto.motorcycle_id_key}
+    />
   </body>
 </Layout>
 
-<script define:vars={{ initialData }}>
+<script define:vars={{ initialData, moto }}>
   // Handle financing button clicks
   document.querySelectorAll("[data-financing-button]").forEach((button) => {
     button.addEventListener("click", () => {
       const colors = JSON.parse(button.getAttribute("data-colors") || "[]");
+      
       if (colors.length === 1) {
         // If there's only one color, redirect directly
-        const motoCode = initialData.motoCode;
         const financingUrl = initialData.financingUrl;
-        const url = `${financingUrl}?codigoMoto=${motoCode}_${colors[0].color_id}`;
+        const url = `${financingUrl}?codigoMoto=${moto.motorcycle_id_key}_${colors[0].color_id}`;
 
         try {
           if (window !== window.parent) {

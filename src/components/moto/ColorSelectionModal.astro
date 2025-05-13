@@ -8,9 +8,10 @@ interface Props {
     name_color: string;
   }>;
   motoCode: string;
+  motorcycle_id_key?: string;
 }
 
-const { colors, motoCode } = Astro.props;
+const { colors, motoCode, motorcycle_id_key = '' } = Astro.props;
 const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
 ---
 
@@ -66,7 +67,7 @@ const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
   }
 </style>
 
-<script define:vars={{ financingUrl, motoCode }}>
+<script define:vars={{ financingUrl, motoCode, motorcycle_id_key }}>
   const modal = document.getElementById('colorSelectionModal');
   const financingButton = document.getElementById('financingButton');
   const closeButton = document.getElementById('closeModalButton');
@@ -78,7 +79,7 @@ const financingUrl = import.meta.env.PUBLIC_FINANCING_URL;
   }
 
   function handleFinancing(colorId) {
-    const url = `${financingUrl}?codigoMoto=${motoCode}_${colorId}`;
+    const url = `${financingUrl}?codigoMoto=${motorcycle_id_key}_${colorId}`;
 
     try {
       if (window !== window.parent) {

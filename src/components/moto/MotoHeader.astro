@@ -22,7 +22,12 @@ const { moto, bannerImages, formatPrice, initialImage } = Astro.props;
         <h2
           class={`${moto.modelo.length > 18 ? "text-xl lg:text-3xl" : "text-3xl lg:text-4xl"} font-semibold text-white hidden md:block`}
         >
-          {moto.modelo}
+          <div class="flex items-center gap-3">
+            <span>{moto.modelo}</span>
+            {moto.isPreOwned && 
+              <span class="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full">Seminueva</span>
+            }
+          </div>
         </h2>
         <strong class="text-2xl hidden lg:block font-medium text-gg-blue-100">
           {moto.currency.toLowerCase() === "sol" ? "S/" : "$"}
