@@ -136,7 +136,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
 
   return (
     <article
-      className="border cursor-pointer border-stroke rounded-lg bg-white w-full group aspect-[11/8]"
+      className="border cursor-pointer border-stroke rounded-lg bg-white w-full group aspect-[11/8] h-full"
       data-moto
       data-id={moto.idModelo}
       data-marca={moto.marca}
