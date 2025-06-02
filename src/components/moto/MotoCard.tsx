@@ -105,9 +105,10 @@ const ColorCircle = ({
 const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
   const handleClick = () => {
     const isInIframe = window !== window.parent;
-    const motoUrl = moto.isPreOwned && moto.motorcycle_id_key 
-      ? moto.motorcycle_id_key 
-      : moto.code;
+    const motoUrl =
+      moto.isPreOwned && moto.motorcycle_id_key
+        ? moto.motorcycle_id_key
+        : moto.code;
 
     if (isInIframe && window.top) {
       window.top.location.href = `${
@@ -195,27 +196,29 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
               ))}
             </div>
           </div>
-          <span className="text-gg-red-600 font-medium flex items-center gap-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="icon icon-tabler icons-tabler-outline icon-tabler-rosette-discount"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M9 15l6 -6" />
-              <circle cx="9.5" cy="9.5" r=".5" fill="currentColor" />
-              <circle cx="14.5" cy="14.5" r=".5" fill="currentColor" />
-              <path d="M5 7.2a2.2 2.2 0 0 1 2.2 -2.2h1a2.2 2.2 0 0 0 1.55 -.64l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7a2.2 2.2 0 0 0 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1a2.2 2.2 0 0 0 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.64 1.55v1a2.2 2.2 0 0 1 -2.2 2.2h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1" />
-            </svg>
-            Desde {formatPrice(Number(moto.fee_amount), "sol")} semanales
-          </span>
+          {Number(moto.fee_amount) > 0 && (
+            <span className="text-gg-red-600 font-medium flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="icon icon-tabler icons-tabler-outline icon-tabler-rosette-discount"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M9 15l6 -6" />
+                <circle cx="9.5" cy="9.5" r=".5" fill="currentColor" />
+                <circle cx="14.5" cy="14.5" r=".5" fill="currentColor" />
+                <path d="M5 7.2a2.2 2.2 0 0 1 2.2 -2.2h1a2.2 2.2 0 0 0 1.55 -.64l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7a2.2 2.2 0 0 0 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1a2.2 2.2 0 0 0 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.64 1.55v1a2.2 2.2 0 0 1 -2.2 2.2h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1" />
+              </svg>
+              Desde {formatPrice(Number(moto.fee_amount), "sol")} semanales
+            </span>
+          )}
         </div>
       </section>
 
@@ -230,12 +233,14 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
                 {moto.cilindrada}
               </span>
             </div>
-            <div className="flex gap-2 items-center">
-              <span className="text-sm text-primary-text">Rendimiento:</span>
-              <span className="text-sm text-primary-text">
-                {moto.rendimiento}
-              </span>
-            </div>
+            {moto.rendimiento && (
+              <div className="flex gap-2 items-center">
+                <span className="text-sm text-primary-text">Rendimiento:</span>
+                <span className="text-sm text-primary-text">
+                  {moto.rendimiento}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </footer>

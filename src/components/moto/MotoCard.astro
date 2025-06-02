@@ -151,11 +151,13 @@ const ColorCircle = ({
         style={{ viewTransitionName: `moto-marca-${moto.idModelo}` }}
       />
     </div>
-    {moto.isPreOwned && (
-      <div class="absolute top-3 right-16 bg-amber-500 text-white text-xs font-medium px-2 py-1 rounded-md">
-        Seminueva
-      </div>
-    )}
+    {
+      moto.isPreOwned && (
+        <div class="absolute top-3 right-16 bg-amber-500 text-white text-xs font-medium px-2 py-1 rounded-md">
+          Seminueva
+        </div>
+      )
+    }
   </header>
 
   <section class="px-4">
@@ -213,10 +215,14 @@ const ColorCircle = ({
           <span class="text-sm text-primary-text">Cilindrada (CS):</span>
           <span class="text-sm text-primary-text">{moto.cilindrada}</span>
         </div>
-        <div class="flex gap-2 items-center">
-          <span class="text-sm text-primary-text">Rendimiento:</span>
-          <span class="text-sm text-primary-text">{moto.rendimiento}</span>
-        </div>
+        {
+          moto.rendimiento && (
+            <div class="flex gap-2 items-center">
+              <span class="text-sm text-primary-text">Rendimiento:</span>
+              <span class="text-sm text-primary-text">{moto.rendimiento}</span>
+            </div>
+          )
+        }
       </div>
     </div>
   </footer>
@@ -231,7 +237,7 @@ const ColorCircle = ({
       const motoCode = card.getAttribute("data-code");
       const isPreOwned = card.hasAttribute("data-preowned");
       const motoIdKey = card.getAttribute("data-motorcycle-id-key");
-      
+
       // Usar motorcycle_id_key si está disponible y la moto es de segunda mano
       const motoUrl = isPreOwned && motoIdKey ? motoIdKey : motoCode;
 
