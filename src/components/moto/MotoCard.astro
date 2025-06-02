@@ -167,20 +167,24 @@ const ColorCircle = ({
               : formatPrice(moto.price_dollar, "usd")
           }
         </span>
-        <span class="text-gg-red-600 font-medium flex items-center gap-1">
-          Desde {
-            formatPrice(
-              calculateMonthlyPayment(
-                moto.currency.toLowerCase() === "sol"
-                  ? moto.precio
-                  : moto.price_dollar,
-                75,
-                52
-              ),
-              moto.currency.toLowerCase()
-            )
-          } semanales
-        </span>
+        {
+          Number(moto.fee_amount) > 0 && (
+            <span class="text-gg-red-600 font-medium flex items-center gap-1">
+              Desde{" "}
+              {formatPrice(
+                calculateMonthlyPayment(
+                  moto.currency.toLowerCase() === "sol"
+                    ? moto.precio
+                    : moto.price_dollar,
+                  75,
+                  52
+                ),
+                moto.currency.toLowerCase()
+              )}{" "}
+              semanales
+            </span>
+          )
+        }
       </div>
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-1.5">
@@ -206,10 +210,14 @@ const ColorCircle = ({
           <span class="text-sm text-primary-text">Cilindrada (CS):</span>
           <span class="text-sm text-primary-text">{moto.cilindrada}</span>
         </div>
-        <div class="flex gap-2 items-center">
-          <span class="text-sm text-primary-text">Rendimiento:</span>
-          <span class="text-sm text-primary-text">{moto.rendimiento}</span>
-        </div>
+        {
+          moto.rendimiento && (
+            <div class="flex gap-2 items-center">
+              <span class="text-sm text-primary-text">Rendimiento:</span>
+              <span class="text-sm text-primary-text">{moto.rendimiento}</span>
+            </div>
+          )
+        }
       </div>
     </div>
   </footer>
