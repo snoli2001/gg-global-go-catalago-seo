@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Image } from "astro:assets";
 
 interface Banner {
   url: string;

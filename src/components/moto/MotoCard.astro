@@ -176,20 +176,24 @@ const ColorCircle = ({
               : formatPrice(moto.price_dollar, "usd")
           }
         </span>
-        <span class="text-gg-red-600 font-medium flex items-center gap-1">
-          Desde {
-            formatPrice(
-              calculateMonthlyPayment(
-                moto.currency.toLowerCase() === "sol"
-                  ? moto.precio
-                  : moto.price_dollar,
-                75,
-                52
-              ),
-              moto.currency.toLowerCase()
-            )
-          } semanales
-        </span>
+        {
+          Number(moto.fee_amount) > 0 && (
+            <span class="text-gg-red-600 font-medium flex items-center gap-1">
+              Desde{" "}
+              {formatPrice(
+                calculateMonthlyPayment(
+                  moto.currency.toLowerCase() === "sol"
+                    ? moto.precio
+                    : moto.price_dollar,
+                  75,
+                  52
+                ),
+                moto.currency.toLowerCase()
+              )}{" "}
+              semanales
+            </span>
+          )
+        }
       </div>
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-1.5">
