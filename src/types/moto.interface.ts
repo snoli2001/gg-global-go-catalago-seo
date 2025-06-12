@@ -51,4 +51,11 @@ export interface Moto {
   code: string;
   price_dollar: number;
   fee_amount: number;
-} 
+  isPreOwned: boolean;
+  usedKilometers?: number;
+  usedTimeMonths?: number;
+  usedDetails?: string;
+  modelYear: number;
+  motorcycle_id_key: string;
+}
+

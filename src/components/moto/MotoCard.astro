@@ -124,6 +124,8 @@ const ColorCircle = ({
   data-cilindrada={moto.cilindrada}
   data-rendimiento={moto.rendimiento}
   data-code={moto.code}
+  data-preowned={moto.isPreOwned}
+  data-motorcycle-id-key={moto.motorcycle_id_key}
 >
   <header class="flex relative">
     <div class="w-full aspect-[4/3] overflow-hidden px-4 pt-5 pb-3">
@@ -149,6 +151,13 @@ const ColorCircle = ({
         style={{ viewTransitionName: `moto-marca-${moto.idModelo}` }}
       />
     </div>
+    {
+      moto.isPreOwned && (
+        <div class="absolute top-3 right-16 bg-amber-500 text-white text-xs font-medium px-2 py-1 rounded-md">
+          Seminueva
+        </div>
+      )
+    }
   </header>
 
   <section class="px-4">
@@ -169,7 +178,7 @@ const ColorCircle = ({
         </span>
         {
           Number(moto.fee_amount) > 0 && (
-            <span class="text-gg-red-600 font-medium flex items-center gap-1">
+            <span class="text-esmerald-600 font-medium flex items-center gap-1">
               Desde{" "}
               {formatPrice(
                 calculateMonthlyPayment(
@@ -230,18 +239,23 @@ const ColorCircle = ({
     card.addEventListener("click", () => {
       const isInIframe = window !== window.parent;
       const motoCode = card.getAttribute("data-code");
+      const isPreOwned = card.hasAttribute("data-preowned");
+      const motoIdKey = card.getAttribute("data-motorcycle-id-key");
+
+      // Usar motorcycle_id_key si está disponible y la moto es de segunda mano
+      const motoUrl = isPreOwned && motoIdKey ? motoIdKey : motoCode;
 
       if (isInIframe && window.top) {
-        window.top.location.href = `${import.meta.env.PUBLIC_MOTO_DETAIL_URL}?codigoMoto=${motoCode}`;
+        window.top.location.href = `${import.meta.env.PUBLIC_MOTO_DETAIL_URL}?codigoMoto=${motoUrl}`;
         return;
       }
 
       if ((document as any).startViewTransition) {
         (document as any).startViewTransition(() => {
-          window.location.href = `/motos/${motoCode}`;
+          window.location.href = `/motos/${motoUrl}`;
         });
       } else {
-        window.location.href = `/motos/${motoCode}`;
+        window.location.href = `/motos/${motoUrl}`;
       }
     });
   });

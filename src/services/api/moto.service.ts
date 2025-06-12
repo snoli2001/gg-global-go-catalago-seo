@@ -10,7 +10,11 @@ class MotoService {
       if (!response.ok) {
         throw new Error('Failed to fetch motorcycles');
       }
-      return await response.json();
+      const data = await response.json();
+      return data.map((moto: Moto) => ({
+        ...moto,
+        isPreOwned: moto.isPreOwned || false,
+      }));
     } catch (error) {
       console.error('Error fetching motorcycles:', error);
       throw error;

@@ -10,7 +10,7 @@ interface EnvConfig {
 
 const env: EnvConfig = {
   siteUrl: import.meta.env.PUBLIC_SITE_URL || 'http://localhost:3000',
-  apiUrl: import.meta.env.PUBLIC_API_URL || 'https://globalgo-api.sis360.com.pe/api/Catalog',
+  apiUrl: import.meta.env.PUBLIC_API_URL || 'https://globalgo-api-qas.sis360.com.pe/api/Catalog',
   environment: (import.meta.env.PUBLIC_ENV as 'development' | 'production') || 'development',
   analyticsId: import.meta.env.PUBLIC_ANALYTICS_ID || '',
   googleMapsKey: import.meta.env.PUBLIC_GOOGLE_MAPS_KEY || '',

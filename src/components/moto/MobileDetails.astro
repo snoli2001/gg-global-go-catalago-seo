@@ -13,7 +13,18 @@ const { moto, formatPrice } = Astro.props;
   class="mx-auto px-4 pb-6 gap-4 flex flex-col md:px-16 lg:hidden max-w-screen-2xl"
 >
   <div>
-    <h1 class="text-3xl font-semibold text-dark">{moto.modelo}</h1>
+    <div class="text-3xl font-semibold text-dark">
+      <div class="flex items-center gap-3">
+        <h1>{moto.modelo}</h1>
+        {
+          moto.isPreOwned && (
+            <span class="text-sm px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full">
+              Seminueva
+            </span>
+          )
+        }
+      </div>
+    </div>
     <strong class="text-2xl font-medium text-gg-blue-700">
       {moto.currency.toLowerCase() === "sol" ? "S/" : "$"}
       {

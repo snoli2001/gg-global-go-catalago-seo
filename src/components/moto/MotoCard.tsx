@@ -50,17 +50,6 @@ const getBannerImage = (moto: Moto): string => {
   return "/imgs/moto.png";
 };
 
-const calculateMonthlyPayment = (
-  price: number,
-  annualInterestRate: number,
-  months: number
-): number => {
-  const monthlyRate = annualInterestRate / 52 / 100;
-  const numerator = monthlyRate * Math.pow(1 + monthlyRate, months);
-  const denominator = Math.pow(1 + monthlyRate, months) - 1;
-  return Math.ceil(price * (numerator / denominator));
-};
-
 const getCategoryClass = (categoria: string): string => {
   const baseClasses =
     "absolute top-3 -left-3 text-sm text-white rounded-md px-2 py-1";
@@ -116,21 +105,24 @@ const ColorCircle = ({
 const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
   const handleClick = () => {
     const isInIframe = window !== window.parent;
-    const motoCode = moto.code;
+    const motoUrl =
+      moto.isPreOwned && moto.motorcycle_id_key
+        ? moto.motorcycle_id_key
+        : moto.code;
 
     if (isInIframe && window.top) {
       window.top.location.href = `${
         import.meta.env.PUBLIC_MOTO_DETAIL_URL
-      }?codigoMoto=${motoCode}`;
+      }?codigoMoto=${motoUrl}`;
       return;
     }
 
     if ((document as any).startViewTransition) {
       (document as any).startViewTransition(() => {
-        window.location.href = `/motos/${motoCode}`;
+        window.location.href = `/motos/${motoUrl}`;
       });
     } else {
-      window.location.href = `/motos/${motoCode}`;
+      window.location.href = `/motos/${motoUrl}`;
     }
   };
 
@@ -148,7 +140,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
       data-code={moto.code}
       onClick={handleClick}
     >
-      <header className="flex relative">
+      <header className="relative">
         <div className="w-full aspect-[11/8] overflow-hidden px-4 pt-5 pb-3 relative">
           <img
             src={getBannerImage(moto)}
@@ -175,6 +167,11 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
             style={{ viewTransitionName: `moto-marca-${moto.idModelo}` }}
           />
         </div>
+        {moto.isPreOwned && (
+          <div className="absolute top-12 -left-3 bg-yellow-100 text-yellow-800 text-white text-sm font-medium px-2 py-1 rounded-md">
+            Seminueva
+          </div>
+        )}
       </header>
 
       <section className="px-4">
@@ -240,7 +237,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
               <div className="flex gap-2 items-center">
                 <span className="text-sm text-primary-text">Rendimiento:</span>
                 <span className="text-sm text-primary-text">
-                {moto.rendimiento}
+                  {moto.rendimiento}
                 </span>
               </div>
             )}
