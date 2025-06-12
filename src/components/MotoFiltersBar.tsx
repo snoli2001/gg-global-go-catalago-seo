@@ -820,11 +820,11 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
       <div className="flex-1 pb-24">
         {/* Section title */}
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold">
+          <h1 className="text-2xl font-semibold">
             {activeTab === 'new' ? 'Motos Nuevas' : 
              activeTab === 'used' ? 'Motos Seminuevas' : 
              'Catálogo de Motos'}
-          </h2>
+          </h1>
           <p className="text-gray-600">
             {activeTab === 'new' ? 'Descubre nuestra selección de motos nuevas' : 
              activeTab === 'used' ? 'Encuentra motos seminuevas en excelente estado' : 
