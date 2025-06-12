@@ -490,8 +490,8 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
     <div className="flex flex-col lg:flex-row gap-6" data-moto-filters>
 
       {/* Botón de filtros y tabs para móvil */}
-      <div className="lg:hidden flex items-center gap-4 mb-6">
-        <div className="flex-1 bg-white rounded-lg shadow p-2">
+      <div className="lg:hidden flex items-center justify-end gap-4 mb-6">
+        {/* <div className="flex-1 bg-white rounded-lg shadow p-2">
           <div className="flex rounded-md overflow-hidden">
             <button
               onClick={() => setActiveTab('all')}
@@ -524,18 +524,19 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
               Seminuevas
             </button>
           </div>
-        </div>
+        </div> */}
         <button
           onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
           className="flex items-center gap-2 p-4 bg-gg-blue-700 text-white rounded-lg hover:bg-gg-blue-800 transition-colors"
         >
+          <span className="text-lg">Filtros</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-7 h-7"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
