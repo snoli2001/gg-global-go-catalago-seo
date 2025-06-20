@@ -39,7 +39,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [activeTab, setActiveTab] = useState<'all' | 'new' | 'used'>('all');
+  const [activeTab, setActiveTab] = useState<"all" | "new" | "used">("all");
   const [pendingFilters, setPendingFilters] = useState<{
     price: boolean;
     displacement: boolean;
@@ -64,12 +64,12 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
 
   // Update isPreOwned filter when tab changes
   useEffect(() => {
-    if (activeTab === 'new') {
-      setFilters(prev => ({ ...prev, isPreOwned: false }));
-    } else if (activeTab === 'used') {
-      setFilters(prev => ({ ...prev, isPreOwned: true }));
+    if (activeTab === "new") {
+      setFilters((prev) => ({ ...prev, isPreOwned: false }));
+    } else if (activeTab === "used") {
+      setFilters((prev) => ({ ...prev, isPreOwned: true }));
     } else {
-      setFilters(prev => ({ ...prev, isPreOwned: null }));
+      setFilters((prev) => ({ ...prev, isPreOwned: null }));
     }
   }, [activeTab]);
 
@@ -83,7 +83,13 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
     ) {
       applyFilters();
     }
-  }, [filters.brands, filters.transmission, filters.categories, filters.sort, filters.isPreOwned]);
+  }, [
+    filters.brands,
+    filters.transmission,
+    filters.categories,
+    filters.sort,
+    filters.isPreOwned,
+  ]);
 
   useEffect(() => {
     // Aplicar filtros cuando cambie la página
@@ -93,13 +99,13 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   // Listen for tab change events from parent
   useEffect(() => {
     const handleTabChange = (event: CustomEvent<{ tab: string }>) => {
-      const tab = event.detail.tab as 'all' | 'new' | 'used';
+      const tab = event.detail.tab as "all" | "new" | "used";
       setActiveTab(tab);
     };
 
-    window.addEventListener('tabChange', handleTabChange as EventListener);
+    window.addEventListener("tabChange", handleTabChange as EventListener);
     return () => {
-      window.removeEventListener('tabChange', handleTabChange as EventListener);
+      window.removeEventListener("tabChange", handleTabChange as EventListener);
     };
   }, []);
 
@@ -193,8 +199,8 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
 
     // Apply pre-owned filter
     if (filters.isPreOwned !== null) {
-      filteredMotos = filteredMotos.filter((moto) => 
-        moto.isPreOwned === filters.isPreOwned
+      filteredMotos = filteredMotos.filter(
+        (moto) => moto.isPreOwned === filters.isPreOwned
       );
     }
 
@@ -232,12 +238,15 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
     });
   }, [filters, initialMotos, currentPage, itemsPerPage]);
 
-  const handlePageChange = useCallback((newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [totalPages]);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage >= 1 && newPage <= totalPages) {
+        setCurrentPage(newPage);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    },
+    [totalPages]
+  );
 
   const handleSortChange = useCallback((value: string) => {
     setFilters((prev) => ({ ...prev, sort: value }));
@@ -342,14 +351,17 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
       performance: false,
       chips: false,
     });
-    setActiveTab('all');
+    setActiveTab("all");
     setMotos(initialMotos);
   };
 
-  const sortOptions = useMemo(() => [
-    { value: "price_desc", label: "Precio: Mayor a Menor" },
-    { value: "price_asc", label: "Precio: Menor a Mayor" },
-  ], []);
+  const sortOptions = useMemo(
+    () => [
+      { value: "price_desc", label: "Precio: Mayor a Menor" },
+      { value: "price_asc", label: "Precio: Menor a Mayor" },
+    ],
+    []
+  );
 
   const hasPendingFilters = () => {
     return Object.values(pendingFilters).some((value) => value);
@@ -488,55 +500,20 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
 
   return (
     <div className="flex flex-col lg:flex-row gap-6" data-moto-filters>
-
       {/* Botón de filtros y tabs para móvil */}
-      <div className="lg:hidden flex items-center justify-end gap-4 mb-6">
-        <div className="flex-1 bg-white rounded-lg shadow p-2">
-          <div className="flex rounded-md overflow-hidden">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
-                activeTab === 'all'
-                  ? 'bg-gg-blue-700 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:enabled:bg-gray-200'
-              }`}
-            >
-              Todas
-            </button>
-            <button
-              onClick={() => setActiveTab('new')}
-              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
-                activeTab === 'new'
-                  ? 'bg-gg-blue-700 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:enabled:bg-gray-200'
-              }`}
-            >
-              Nuevas
-            </button>
-            <button
-              onClick={() => setActiveTab('used')}
-              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
-                activeTab === 'used'
-                  ? 'bg-gg-blue-700 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:enabled:bg-gray-200'
-              }`}
-            >
-              Seminuevas
-            </button>
-          </div>
-        </div>
+      <div className="lg:hidden justify-end flex">
         <button
           onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
-          className="flex items-center gap-2 p-4 bg-gg-blue-700 text-white rounded-lg hover:bg-gg-blue-800 transition-colors"
+          className="flex items-center gap-2 p-3 bg-gg-blue-700 text-white rounded-lg hover:bg-gg-blue-800 transition-colors "
         >
-          <span className="text-lg">Filtros</span>
+          <span className="text-base">Filtros</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
+            className="w-4 h-4"
           >
             <path
               strokeLinecap="round"
@@ -546,7 +523,43 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
           </svg>
         </button>
       </div>
-              
+      <div className="lg:hidden flex items-center justify-end gap-4">
+        <div className="flex-1 bg-white rounded-lg shadow p-2">
+          <div className="flex rounded-md overflow-hidden">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                activeTab === "all"
+                  ? "bg-gg-blue-700 text-white"
+                  : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
+              }`}
+            >
+              Todas
+            </button>
+            <button
+              onClick={() => setActiveTab("new")}
+              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                activeTab === "new"
+                  ? "bg-gg-blue-700 text-white"
+                  : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
+              }`}
+            >
+              Nuevas
+            </button>
+            <button
+              onClick={() => setActiveTab("used")}
+              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                activeTab === "used"
+                  ? "bg-gg-blue-700 text-white"
+                  : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
+              }`}
+            >
+              Seminuevas
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Filtros */}
       <aside
         className={`
@@ -821,14 +834,18 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
         {/* Section title */}
         <div className="mb-6">
           <h1 className="text-2xl font-semibold">
-            {activeTab === 'new' ? 'Motos Nuevas' : 
-             activeTab === 'used' ? 'Motos Seminuevas' : 
-             'Catálogo de Motos'}
+            {activeTab === "new"
+              ? "Motos Nuevas"
+              : activeTab === "used"
+              ? "Motos Seminuevas"
+              : "Catálogo de Motos"}
           </h1>
           <p className="text-gray-600">
-            {activeTab === 'new' ? 'Descubre nuestra selección de motos nuevas' : 
-             activeTab === 'used' ? 'Encuentra motos seminuevas en excelente estado' : 
-             'Explora nuestro catálogo completo de motos'}
+            {activeTab === "new"
+              ? "Descubre nuestra selección de motos nuevas"
+              : activeTab === "used"
+              ? "Encuentra motos seminuevas en excelente estado"
+              : "Explora nuestro catálogo completo de motos"}
           </p>
         </div>
 
