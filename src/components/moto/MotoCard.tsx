@@ -106,9 +106,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
   const handleClick = () => {
     const isInIframe = window !== window.parent;
     const motoUrl =
-      moto.isPreOwned && moto.motorcycle_id_key
-        ? moto.motorcycle_id_key
-        : moto.code;
+      moto.code;
 
     if (isInIframe && window.top) {
       window.top.location.href = `${
@@ -196,7 +194,7 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
               ))}
             </div>
           </div>
-          {Number(moto.fee_amount) > 0 && (
+          {Number(moto.fee_amount) > 0 && !moto.isPreOwned && (
             <span className="text-xl text-emerald-600 font-medium flex items-center gap-1 mt-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
