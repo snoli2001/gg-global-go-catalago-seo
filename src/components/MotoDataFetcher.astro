@@ -28,14 +28,14 @@ try {
     await Promise.all([
       dealer
         ? brandsService.getBrandsByDealer(dealer.id)
-        : brandsService.getBrandsByDealer("10"),
+        : brandsService.getBrandsByDealer("1"),
       categoriesService.getCategories(),
       dealer
         ? bannersService.getBannersByDealer(dealer.id)
-        : bannersService.getBannersByDealer("10"),
+        : bannersService.getBannersByDealer("1"),
       dealer
         ? motoService.getMotosByDealer(dealer.id)
-        : motoService.getMotosByDealer("10"),
+        : motoService.getMotosByDealer("1"),
     ]);
 
   brands = brandsData;

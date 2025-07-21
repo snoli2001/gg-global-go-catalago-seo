@@ -22,7 +22,7 @@ class MotoService {
   }
 
   async getMotos(): Promise<Moto[]> {
-    return this.fetchMotos("/Catalog/getMotorcycles?dealers_catalog_id=10");
+    return this.fetchMotos("/Catalog/getMotorcycles?dealers_catalog_id=1");
   }
 
   async getMotosByDealer(dealerId: string): Promise<Moto[]> {
