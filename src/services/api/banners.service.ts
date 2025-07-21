@@ -27,7 +27,7 @@ class BannersService {
   }
 
   async getBannersByDealer(dealerId: string): Promise<Banner[]> {
-    return this.fetchBanners(`/Catalog/getBannerAd?dealers_id=${dealerId}`);
+    return this.fetchBanners(`/Catalog/getBannerAd?dealers_catalog_id=${dealerId}`);
   }
 }
 

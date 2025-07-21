@@ -37,7 +37,7 @@ class BrandsService {
   }
 
   async getBrandsByDealer(dealerId: string): Promise<Brand[]> {
-    return this.fetchBrands(`/Catalog/getBrands?dealers_id=${dealerId}`);
+    return this.fetchBrands(`/Catalog/getBrands?dealers_catalog_id=${dealerId}`);
   }
 }
 
