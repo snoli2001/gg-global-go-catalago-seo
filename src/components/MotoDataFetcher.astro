@@ -6,12 +6,15 @@ import { bannersService } from "../services/api/banners.service";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
-import Layout from "../layouts/Layout.astro";
+import type { Dealer } from "../types/dealer.interface";
 import SearchBar from "./ui/SearchBar.astro";
 import MotoFiltersBar from "./MotoFiltersBar";
 import BannerCarousel from "./ui/BannerCarousel";
 
 export const prerender = true;
+
+// Extract dealer prop (optional)
+const { dealer }: { dealer?: Dealer } = Astro.props;
 
 // Fetch critical data first
 let brands: Brand[] = [];
@@ -23,10 +26,16 @@ try {
   // Fetch all data in parallel including motos
   const [brandsData, categoriesData, bannersData, motosData] =
     await Promise.all([
-      brandsService.getBrands(),
+      dealer
+        ? brandsService.getBrandsByDealer(dealer.id)
+        : brandsService.getBrandsByDealer("10"),
       categoriesService.getCategories(),
-      bannersService.getBanners(),
-      motoService.getMotos(),
+      dealer
+        ? bannersService.getBannersByDealer(dealer.id)
+        : bannersService.getBannersByDealer("10"),
+      dealer
+        ? motoService.getMotosByDealer(dealer.id)
+        : motoService.getMotosByDealer("10"),
     ]);
 
   brands = brandsData;
@@ -46,29 +55,34 @@ try {
   <div class="-mx-4 lg:mx-0">
     <BannerCarousel client:load banners={banners} />
   </div>
+
   <div class="w-full flex flex-col items-center lg:mb-8">
-    <div class="hidden lg:block bg-white rounded-lg shadow-md p-3 mb-4 w-1/2">
-      <div class="flex rounded-md overflow-hidden">
-        <button
-          class="flex-1 py-4 px-6 text-center font-medium text-lg transition-colors bg-gg-blue-700 text-white shadow-sm"
-          data-tab="all"
-        >
-          Todas
-        </button>
-        <button
-          class="flex-1 py-4 px-6 text-center font-medium text-lg transition-colors bg-gray-100 text-gray-700 hover:enabled:bg-gray-200 hover:enabled:text-gray-800"
-          data-tab="new"
-        >
-          Nuevas
-        </button>
-        <button
-          class="flex-1 py-4 px-6 text-center font-medium text-lg transition-colors bg-gray-100 text-gray-700 hover:enabled:bg-gray-200 hover:enabled:text-gray-800"
-          data-tab="used"
-        >
-          Seminuevas
-        </button>
-      </div>
-    </div>
+    {
+      (!dealer || dealer.allow_pre_owned === "TRUE") && (
+        <div class="hidden lg:block bg-white rounded-lg shadow-md p-3 mb-4 w-1/2">
+          <div class="flex rounded-md overflow-hidden">
+            <button
+              class="flex-1 py-4 px-6 text-center font-medium text-lg transition-colors bg-gg-blue-700 text-white shadow-sm"
+              data-tab="all"
+            >
+              Todas
+            </button>
+            <button
+              class="flex-1 py-4 px-6 text-center font-medium text-lg transition-colors bg-gray-100 text-gray-700 hover:enabled:bg-gray-200 hover:enabled:text-gray-800"
+              data-tab="new"
+            >
+              Nuevas
+            </button>
+            <button
+              class="flex-1 py-4 px-6 text-center font-medium text-lg transition-colors bg-gray-100 text-gray-700 hover:enabled:bg-gray-200 hover:enabled:text-gray-800"
+              data-tab="used"
+            >
+              Seminuevas
+            </button>
+          </div>
+        </div>
+      )
+    }
     <SearchBar motos={initialMotos} />
   </div>
 
@@ -78,7 +92,7 @@ try {
       initialBrands={brands}
       initialCategories={categories}
       initialMotos={initialMotos}
-      hideTabsInDesktop={true}
+      showPreOwnedTabs={!dealer || dealer.allow_pre_owned !== "FALSE"}
     />
   </div>
 </div>
@@ -86,7 +100,6 @@ try {
 <script>
   // Handle tab clicks
   const tabButtons = document.querySelectorAll<HTMLButtonElement>("[data-tab]");
-  const motoFiltersBar = document.querySelector("[data-moto-filters]");
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {

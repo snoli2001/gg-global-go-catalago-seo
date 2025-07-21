@@ -1,16 +1,17 @@
 import type { Brand } from "../../types/brand.interface";
+import env from "../../config/env";
 
 class BrandsService {
-  private readonly apiUrl = import.meta.env.PUBLIC_API_URL;
+  private readonly apiUrl = env.apiUrl;
 
-  async getBrands(): Promise<Brand[]> {
+  private async fetchBrands(endpoint: string): Promise<Brand[]> {
     try {
       if (!this.apiUrl) {
         console.error("PUBLIC_API_URL is not defined");
         throw new Error("API URL is not configured");
       }
 
-      const response = await fetch(`${this.apiUrl}/getBrands`);
+      const response = await fetch(`${this.apiUrl}${endpoint}`);
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Failed to fetch brands:", {
@@ -26,9 +27,17 @@ class BrandsService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Error in getBrands:", error);
+      console.error("Error in fetchBrands:", error);
       throw error; // Re-throw para manejar en el nivel superior
     }
+  }
+
+  async getBrands(): Promise<Brand[]> {
+    return this.fetchBrands("/Catalog/getBrands");
+  }
+
+  async getBrandsByDealer(dealerId: string): Promise<Brand[]> {
+    return this.fetchBrands(`/Catalog/getBrands?dealers_id=${dealerId}`);
   }
 }
 

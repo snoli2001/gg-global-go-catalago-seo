@@ -23,7 +23,7 @@ interface MotoFiltersBarProps {
   initialCategories: Category[];
   initialMotos: Moto[];
   itemsPerPage?: number;
-  hideTabsInDesktop?: boolean;
+  showPreOwnedTabs?: boolean;
 }
 
 const MotoFiltersBar = memo(function MotoFiltersBar({
@@ -31,7 +31,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   initialCategories,
   initialMotos,
   itemsPerPage = 12,
-  hideTabsInDesktop = false,
+  showPreOwnedTabs = true,
 }: MotoFiltersBarProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
@@ -523,42 +523,44 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
           </svg>
         </button>
       </div>
-      <div className="lg:hidden flex items-center justify-end gap-4">
-        <div className="flex-1 bg-white rounded-lg shadow p-2">
-          <div className="flex rounded-md overflow-hidden">
-            <button
-              onClick={() => setActiveTab("all")}
-              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
-                activeTab === "all"
-                  ? "bg-gg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
-              }`}
-            >
-              Todas
-            </button>
-            <button
-              onClick={() => setActiveTab("new")}
-              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
-                activeTab === "new"
-                  ? "bg-gg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
-              }`}
-            >
-              Nuevas
-            </button>
-            <button
-              onClick={() => setActiveTab("used")}
-              className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
-                activeTab === "used"
-                  ? "bg-gg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
-              }`}
-            >
-              Seminuevas
-            </button>
+      {showPreOwnedTabs && (
+        <div className="lg:hidden flex items-center justify-end gap-4">
+          <div className="flex-1 bg-white rounded-lg shadow p-2">
+            <div className="flex rounded-md overflow-hidden">
+              <button
+                onClick={() => setActiveTab("all")}
+                className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                  activeTab === "all"
+                    ? "bg-gg-blue-700 text-white"
+                    : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
+                }`}
+              >
+                Todas
+              </button>
+              <button
+                onClick={() => setActiveTab("new")}
+                className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                  activeTab === "new"
+                    ? "bg-gg-blue-700 text-white"
+                    : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
+                }`}
+              >
+                Nuevas
+              </button>
+              <button
+                onClick={() => setActiveTab("used")}
+                className={`flex-1 py-3 px-5 text-base text-center font-medium transition-colors ${
+                  activeTab === "used"
+                    ? "bg-gg-blue-700 text-white"
+                    : "bg-gray-100 text-gray-700 hover:enabled:bg-gray-200"
+                }`}
+              >
+                Seminuevas
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Filtros */}
       <aside

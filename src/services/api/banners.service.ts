@@ -1,3 +1,5 @@
+import env from "../../config/env";
+
 interface Banner {
   url: string;
   code: string;
@@ -5,11 +7,11 @@ interface Banner {
 }
 
 class BannersService {
-  private readonly apiUrl = import.meta.env.PUBLIC_API_URL;
+  private readonly apiUrl = env.apiUrl;
 
-  async getBanners(): Promise<Banner[]> {
+  private async fetchBanners(endpoint: string): Promise<Banner[]> {
     try {
-      const response = await fetch(`${this.apiUrl}/getBannerAd`);
+      const response = await fetch(`${this.apiUrl}${endpoint}`);
       if (!response.ok) {
         throw new Error("Error fetching banners");
       }
@@ -18,6 +20,14 @@ class BannersService {
       console.error("Error fetching banners:", error);
       return [];
     }
+  }
+
+  async getBanners(): Promise<Banner[]> {
+    return this.fetchBanners("/Catalog/getBannerAd");
+  }
+
+  async getBannersByDealer(dealerId: string): Promise<Banner[]> {
+    return this.fetchBanners(`/Catalog/getBannerAd?dealers_id=${dealerId}`);
   }
 }
 
