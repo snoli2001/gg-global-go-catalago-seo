@@ -58,7 +58,7 @@ try {
 
   <div class="w-full flex flex-col items-center lg:mb-8">
     {
-      (!dealer || dealer.allow_pre_owned === "TRUE") && (
+      (!dealer || dealer.allow_pre_owned === "True") && (
         <div class="hidden lg:block bg-white rounded-lg shadow-md p-3 mb-4 w-1/2">
           <div class="flex rounded-md overflow-hidden">
             <button
@@ -92,7 +92,7 @@ try {
       initialBrands={brands}
       initialCategories={categories}
       initialMotos={initialMotos}
-      showPreOwnedTabs={!dealer || dealer.allow_pre_owned !== "FALSE"}
+      showPreOwnedTabs={!dealer || dealer.allow_pre_owned !== "False"}
     />
   </div>
 </div>
