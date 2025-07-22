@@ -345,7 +345,7 @@ const breadcrumbData = {
     button.addEventListener("click", () => {
       const whatsappNumber = dealer.whatsapp_sales_number || "51912440103";
       const message = encodeURIComponent(
-        `Hola, quisiera información sobre la compra en efectivo del modelo ${moto.modelo} ${moto.marca}.`
+        `Hola, quisiera información sobre la compra al contado del modelo ${moto.modelo} ${moto.marca}.`
       );
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
 

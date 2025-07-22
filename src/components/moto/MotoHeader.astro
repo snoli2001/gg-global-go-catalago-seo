@@ -105,16 +105,14 @@ const whatsAppchatLink = `https://api.whatsapp.com/send?phone=51912440103&text=H
               >
                 Solicitar financiamiento
               </button>
-              {
-                dealer && dealer.allow_cash_sales === "True" && (
-                  <button
-                    data-cash-sales-button
-                    class="cursor-pointer inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full"
-                  >
-                    Comprar en efectivo
-                  </button>
-                )
-              }
+              {dealer && dealer.allow_cash_sales === "True" && (
+                <button
+                  data-cash-sales-button
+                  class="cursor-pointer inline-block px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors w-full"
+                >
+                  Comprar al contado
+                </button>
+              )}
             </div>
           )
         }
