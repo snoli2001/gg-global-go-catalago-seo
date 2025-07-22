@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, memo } from "react";
 import type { Brand } from "../types/brand.interface";
 import type { Category } from "../types/category.interface";
 import type { Moto } from "../types/moto.interface";
+import type { Dealer } from "../types/dealer.interface";
 import Select from "./ui/Select";
 import Chip from "./ui/Chip";
 import Input from "./ui/Input";
@@ -24,6 +25,7 @@ interface MotoFiltersBarProps {
   initialMotos: Moto[];
   itemsPerPage?: number;
   showPreOwnedTabs?: boolean;
+  dealer?: Dealer;
 }
 
 const MotoFiltersBar = memo(function MotoFiltersBar({
@@ -32,6 +34,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
   initialMotos,
   itemsPerPage = 12,
   showPreOwnedTabs = true,
+  dealer,
 }: MotoFiltersBarProps) {
   const [brands] = useState<Brand[]>(initialBrands);
   const [categories] = useState<Category[]>(initialCategories);
@@ -854,7 +857,7 @@ const MotoFiltersBar = memo(function MotoFiltersBar({
         {/* Grid container */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {motos.map((moto) => (
-            <MotoCard key={moto.idModelo} moto={moto} />
+            <MotoCard key={moto.idModelo} moto={moto} dealer={dealer} />
           ))}
         </div>
 

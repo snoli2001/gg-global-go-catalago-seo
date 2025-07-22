@@ -1,12 +1,14 @@
 ---
 import type { Moto } from "../../types/moto.interface";
+import type { Dealer } from "../../types/dealer.interface";
 
 interface Props {
   moto: Moto;
   formatPrice: (price: number) => string;
+  dealer?: Dealer;
 }
 
-const { moto, formatPrice } = Astro.props;
+const { moto, formatPrice, dealer } = Astro.props;
 const whatsAppchatLink = `https://api.whatsapp.com/send?phone=51912440103&text=Hola%2C%20quisiera%20informaci%C3%B3n%20sobre%20el%20modelo%20${moto.modelo}%2C%20del%20cat%C3%A1logo%20de%20las%20motos%20seminuevas%20%F0%9F%8F%81%F0%9F%94%B4%F0%9F%94%B5`;
 
 ---
@@ -79,13 +81,27 @@ const whatsAppchatLink = `https://api.whatsapp.com/send?phone=51912440103&text=H
         Adquirir moto seminueva
       </a>
     ) : (
-      <button
-        data-financing-button
-        data-colors={JSON.stringify(moto.colores)}
-        class="inline-block w-full px-6 py-3 bg-gg-blue-500 text-white rounded-lg hover:bg-gg-blue-600 transition-colors text-center"
-      >
-        Financiar moto
-      </button>
+      <div class="flex flex-col gap-3">
+        <button
+          data-financing-button
+          data-colors={JSON.stringify(moto.colores)}
+          class="inline-block w-full px-6 py-3 bg-gg-blue-500 text-white rounded-lg hover:bg-gg-blue-600 transition-colors text-center"
+        >
+          Solicitar financiamiento
+        </button>
+        {
+          dealer && dealer.allow_cash_sales === "True" && (
+            <button
+              data-cash-sales-button
+              class="inline-block w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-center"
+            >
+              Comprar en efectivo
+            </button>
+          )
+        }
+      </div>
     )
+
+    
   }
 </section>

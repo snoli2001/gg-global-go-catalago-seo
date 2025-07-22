@@ -83,7 +83,7 @@ try {
         </div>
       )
     }
-    <SearchBar motos={initialMotos} />
+    <SearchBar motos={initialMotos} dealer={dealer} />
   </div>
 
   <div class="flex flex-col lg:flex-row gap-6">
@@ -93,6 +93,7 @@ try {
       initialCategories={categories}
       initialMotos={initialMotos}
       showPreOwnedTabs={!dealer || dealer.allow_pre_owned !== "False"}
+      dealer={dealer}
     />
   </div>
 </div>

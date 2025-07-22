@@ -1,14 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import type { Moto } from "../../types/moto.interface";
+import type { Dealer } from "../../types/dealer.interface";
 
 interface SearchBarProps {
   motos: Moto[];
   placeholder?: string;
+  dealer?: Dealer;
 }
 
 export default function SearchBar({
   motos,
   placeholder = "Encuentra tu moto favorita",
+  dealer,
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +57,10 @@ export default function SearchBar({
   };
 
   const handleResultClick = (moto: Moto) => {
-    window.location.href = `/motos/${moto.code}`;
+    const targetUrl = dealer 
+      ? `/dealers/${dealer.slug}/motos/${moto.code}`
+      : `/motos/${moto.code}`;
+    window.location.href = targetUrl;
     setIsOpen(false);
     setQuery("");
   };
