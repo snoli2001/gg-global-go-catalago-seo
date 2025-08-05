@@ -1,12 +1,14 @@
 ---
 import type { Moto } from "../../types/moto.interface";
+import type { Dealer } from "../../types/dealer.interface";
 
 interface Props {
   motos: Moto[];
   placeholder?: string;
+  dealer?: Dealer;
 }
 
-const { motos, placeholder = "Encuentra tu moto favorita" } = Astro.props;
+const { motos, placeholder = "Encuentra tu moto favorita", dealer } = Astro.props;
 ---
 
 <div class="w-full" id="search-container">
@@ -57,7 +59,10 @@ const { motos, placeholder = "Encuentra tu moto favorita" } = Astro.props;
     const button = document.createElement('button');
     button.className = 'w-full flex items-center gap-4 p-3 hover:bg-gray-50 transition-colors text-left';
     button.onclick = () => {
-      window.location.href = `/motos/${moto.code}`;
+      const targetUrl = dealer 
+        ? `/dealers/${dealer.slug}/motos/${moto.code}`
+        : `/motos/${moto.code}`;
+      window.location.href = targetUrl;
     };
 
     const price = moto.currency.toLowerCase() === 'dolar' ? moto.price_dollar : moto.precio;

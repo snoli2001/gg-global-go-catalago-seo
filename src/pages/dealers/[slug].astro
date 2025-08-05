@@ -1,0 +1,47 @@
+---
+import MotoDataFetcher from "../../components/MotoDataFetcher.astro";
+import Layout from "../../layouts/Layout.astro";
+import { dealersService } from "../../services/api/dealers.service";
+import type { Dealer } from "../../types/dealer.interface";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const dealers = await dealersService.getDealers();
+  return dealers.map((dealer: Dealer) => {
+    const slug = dealer.slug;
+    return {
+      params: { slug },
+      props: { dealer },
+    };
+  });
+}
+
+const { dealer } = Astro.props;
+
+const title = `Catálogo de Motos | ${dealer.name} | Global Go`;
+const description =
+  "Explora nuestro catálogo completo de motos. Encuentra la moto perfecta para ti con especificaciones detalladas, precios y financiamiento disponible. Las mejores marcas y modelos en un solo lugar.";
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={new URL(
+    "../imgs/og-image.jpg",
+    import.meta.env.PUBLIC_SITE_URL
+  ).toString()}
+  canonicalURL={import.meta.env.PUBLIC_SITE_URL}
+  showHeader={false}
+>
+  <meta
+    name="keywords"
+    content="catálogo de motos, venta de motos, motocicletas, motos nuevas, financiamiento de motos, Global Go, cuotas semanales, financiamiento motos"
+  />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="es" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="author" content="Global Go" />
+  <MotoDataFetcher dealer={dealer} />
+</Layout>
+---

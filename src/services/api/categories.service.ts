@@ -1,11 +1,12 @@
 import type { Category } from '../../types/category.interface';
+import env from '../../config/env';
 
 class CategoriesService {
-  private readonly apiUrl = import.meta.env.PUBLIC_API_URL;
+  private readonly apiUrl = env.apiUrl;
 
   async getCategories(): Promise<Category[]> {
     try {
-      const response = await fetch(`${this.apiUrl}/GetCategories`);
+      const response = await fetch(`${this.apiUrl}/Catalog/GetCategories`);
       if (!response.ok) {
         throw new Error('Failed to fetch categories');
       }

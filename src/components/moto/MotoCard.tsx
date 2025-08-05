@@ -1,9 +1,11 @@
 import { memo, useState } from "react";
 import type { Moto } from "../../types/moto.interface";
 import type { Color } from "../../types/moto.interface";
+import type { Dealer } from "../../types/dealer.interface";
 
 interface MotoCardProps {
   moto: Moto;
+  dealer?: Dealer;
 }
 
 const formatPrice = (price: number, currency: string): string => {
@@ -102,11 +104,15 @@ const ColorCircle = ({
   );
 };
 
-const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
+const MotoCard = memo(function MotoCard({ moto, dealer }: MotoCardProps) {
   const handleClick = () => {
     const isInIframe = window !== window.parent;
-    const motoUrl =
-      moto.code;
+    const motoUrl = moto.code;
+    
+    // Determine the correct URL path based on whether we have a dealer
+    const targetUrl = dealer 
+      ? `/dealers/${dealer.slug}/motos/${motoUrl}`
+      : `/motos/${motoUrl}`;
 
     if (isInIframe && window.top) {
       window.top.location.href = `${
@@ -117,10 +123,10 @@ const MotoCard = memo(function MotoCard({ moto }: MotoCardProps) {
 
     if ((document as any).startViewTransition) {
       (document as any).startViewTransition(() => {
-        window.location.href = `/motos/${motoUrl}`;
+        window.location.href = targetUrl;
       });
     } else {
-      window.location.href = `/motos/${motoUrl}`;
+      window.location.href = targetUrl;
     }
   };
 

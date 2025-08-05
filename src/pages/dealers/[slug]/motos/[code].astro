@@ -1,0 +1,366 @@
+---
+import GalleryCarousel from "../../../../components/GalleryCarousel";
+import ColorSelectionModal from "../../../../components/moto/ColorSelectionModal.astro";
+import ColorSelector from "../../../../components/moto/ColorSelector.astro";
+import MobileDetails from "../../../../components/moto/MobileDetails.astro";
+import MotoHeader from "../../../../components/moto/MotoHeader.astro";
+import MotoScripts from "../../../../components/moto/MotoScripts.astro";
+import SpecsSection from "../../../../components/moto/specs/SpecsSection";
+import VideoSection from "../../../../components/moto/VideoSection.astro";
+import Layout from "../../../../layouts/Layout.astro";
+import { dealersService } from "../../../../services/api/dealers.service";
+import { motoService } from "../../../../services/api/moto.service";
+
+export const prerender = true;
+
+// Generate all possible paths at build time
+export async function getStaticPaths() {
+  const dealers = await dealersService.getDealers();
+  const paths = [];
+
+  for (const dealer of dealers) {
+    const motos = await motoService.getMotosByDealer(dealer.id);
+    for (const moto of motos) {
+      paths.push({
+        params: {
+          slug: dealer.slug,
+          code: moto.code,
+        },
+        props: { moto, dealer },
+      });
+    }
+  }
+
+  return paths;
+}
+
+// Get the motorcycle and dealer data from props
+const { moto, dealer } = Astro.props;
+
+// Format price with thousands separator
+const formatPrice = (price: number) => {
+  return price.toLocaleString("en-US", { maximumFractionDigits: 0 });
+};
+
+// Check if URL is a valid YouTube URL
+const isValidYouTubeUrl = (url: string) => {
+  const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  return pattern.test(url);
+};
+
+// Get video embed URL
+const getVideoEmbedUrl = (url: string) => {
+  const videoId = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  )?.[1];
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+};
+
+// Separate banner and gallery images
+const bannerImages =
+  moto?.carrusels?.filter((carrusel) => carrusel.type === "B") || [];
+const galleryImages =
+  moto?.carrusels?.filter((carrusel) => carrusel.type === "G") || [];
+
+// Sort images by idCarrusel
+bannerImages.sort((a, b) => a.idCarrusel - b.idCarrusel);
+galleryImages.sort((a, b) => a.idCarrusel - b.idCarrusel);
+
+// Helper function for template
+const hasColorImage = (colorId: number) => {
+  return bannerImages.some((img) => img.color_id === colorId);
+};
+
+// Find the first color that has a banner image
+const initialColorId =
+  moto.colores.find((color) => hasColorImage(color.color_id))?.color_id ||
+  moto.colores[0].color_id;
+
+// Get the initial banner image
+const getInitialBannerImage = () => {
+  const selectedImage = bannerImages.find(
+    (img) => img.color_id === initialColorId
+  );
+  return selectedImage?.imagen || bannerImages[0]?.imagen || "/imgs/moto.png";
+};
+
+// Prepare data for client-side script
+const initialData = {
+  selectedColorId: initialColorId,
+  bannerImages,
+  galleryImages,
+  motoCode: moto.code,
+  financingUrl: import.meta.env.PUBLIC_FINANCING_URL,
+  dealer,
+};
+
+// Prepare SEO metadata
+const title = `${moto.marca} ${moto.modelo}${moto.isPreOwned ? " Seminueva" : ""} - ${dealer.name} | Global Go`;
+const usedKmFormatted = moto.usedKilometers
+  ? `Con ${moto.usedKilometers.toLocaleString()} km. `
+  : "";
+const description = `Descubre la ${moto.marca} ${moto.modelo}${moto.isPreOwned ? " Seminueva" : ""} en ${dealer.name}. ${moto.isPreOwned ? usedKmFormatted : ""}Precio: ${formatPrice(moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar)} ${moto.currency.toLowerCase() === "sol" ? "Soles" : "Dólares"}. Especificaciones técnicas detalladas, galería de imágenes, videos y opciones de financiamiento disponibles.`;
+const mainImage = bannerImages[0]?.imagen || "/imgs/moto.png";
+
+// Determine the correct URL path
+const motoUrlPath =
+  moto.isPreOwned && moto.motorcycle_id_key
+    ? moto.motorcycle_id_key
+    : moto.code;
+
+// Prepare LCP image for preload
+const lcpImage = getInitialBannerImage();
+
+// Prepare breadcrumb data
+const breadcrumbData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Inicio",
+      item: import.meta.env.PUBLIC_SITE_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: dealer.name,
+      item: `${import.meta.env.PUBLIC_SITE_URL}/dealers/${dealer.slug}`,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: `${moto.marca} ${moto.modelo}`,
+      item: `${import.meta.env.PUBLIC_SITE_URL}/dealers/${dealer.slug}/motos/${motoUrlPath}`,
+    },
+  ],
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={mainImage}
+  canonicalURL={`${import.meta.env.PUBLIC_SITE_URL}/dealers/${dealer.slug}/motos/${motoUrlPath}`}
+  type="product"
+>
+  <!-- Preload LCP image -->
+  <link rel="preload" href={lcpImage} as="image" fetchpriority="high" />
+
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: `${moto.marca} ${moto.modelo}`,
+      image: mainImage,
+      description: description,
+      brand: {
+        "@type": "Brand",
+        name: moto.marca,
+      },
+      model: moto.modelo,
+      manufacturer: {
+        "@type": "Organization",
+        name: moto.marca,
+      },
+      category: "Motocicletas",
+      offers: {
+        "@type": "Offer",
+        price:
+          moto.currency.toLowerCase() === "sol"
+            ? moto.precio
+            : moto.price_dollar,
+        priceCurrency: moto.currency.toLowerCase() === "sol" ? "PEN" : "USD",
+        availability: "https://schema.org/InStock",
+        seller: {
+          "@type": "Organization",
+          name: dealer.name,
+        },
+        itemCondition: moto.isPreOwned
+          ? "https://schema.org/UsedCondition"
+          : "https://schema.org/NewCondition",
+      },
+      ...(moto.isPreOwned && moto.usedKilometers
+        ? {
+            mileageFromOdometer: {
+              "@type": "QuantitativeValue",
+              value: moto.usedKilometers,
+              unitCode: "KMT",
+            },
+          }
+        : {}),
+    })}
+  />
+
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(breadcrumbData)}
+  />
+
+  <meta
+    name="keywords"
+    content={`moto, ${moto.marca}, ${moto.modelo}, ${dealer.name}, ${moto.isPreOwned ? "moto seminueva, moto usada, segunda mano, " : ""}motocicleta, venta de motos, precio moto ${moto.marca} ${moto.modelo}, especificaciones ${moto.marca} ${moto.modelo}, financiamiento motos`}
+  />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="es" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="author" content="Global Go" />
+  <meta property="og:type" content="product" />
+  <meta
+    property="og:price:amount"
+    content={String(
+      moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar
+    )}
+  />
+  <meta
+    property="og:price:currency"
+    content={moto.currency.toLowerCase() === "sol" ? "PEN" : "USD"}
+  />
+  <meta
+    property="product:price:amount"
+    content={String(
+      moto.currency.toLowerCase() === "sol" ? moto.precio : moto.price_dollar
+    )}
+  />
+  <meta
+    property="product:price:currency"
+    content={moto.currency.toLowerCase() === "sol" ? "PEN" : "USD"}
+  />
+  <meta property="product:availability" content="in stock" />
+  <meta
+    property="product:condition"
+    content={moto.isPreOwned ? "used" : "new"}
+  />
+  <meta property="product:brand" content={moto.marca} />
+  <meta property="product:category" content="Motocicletas" />
+  {
+    moto.isPreOwned && moto.usedKilometers && (
+      <meta property="product:mileage" content={String(moto.usedKilometers)} />
+    )
+  }
+
+  <MotoScripts initialData={initialData} />
+
+  <body
+    data-moto-code={moto.code}
+    data-financing-url={import.meta.env.PUBLIC_FINANCING_URL}
+    data-dealer-slug={dealer.slug}
+    data-allow-cash-sales={dealer.allow_cash_sales}
+  >
+    <MotoHeader
+      moto={moto}
+      dealer={dealer}
+      bannerImages={bannerImages}
+      formatPrice={formatPrice}
+      initialImage={lcpImage}
+    />
+
+    <ColorSelector colors={moto.colores} hasColorImage={hasColorImage} />
+
+    <MobileDetails moto={moto} dealer={dealer} formatPrice={formatPrice} />
+
+    <section class="container mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-6">Especificaciones técnicas</h2>
+      <SpecsSection client:idle moto={moto} />
+    </section>
+
+    {
+      galleryImages.length > 0 && (
+        <section class="px-4 bg-dark p-8 lg:px-24 max-w-screen-2xl mx-auto">
+          <h5 class="text-white text-xl lg:text-3xl font-semibold mb-4 lg:mb-8">
+            Galería de imágenes
+          </h5>
+          <GalleryCarousel
+            client:visible
+            images={galleryImages}
+            modelName={`${moto.marca} ${moto.modelo}`}
+          />
+        </section>
+      )
+    }
+
+    <VideoSection
+      moto={moto}
+      isValidYouTubeUrl={isValidYouTubeUrl}
+      getVideoEmbedUrl={getVideoEmbedUrl}
+    />
+
+    <ColorSelectionModal
+      colors={moto.colores}
+      motoCode={moto.code}
+      motorcycle_id_key={moto.motorcycle_id_key}
+    />
+  </body>
+
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .moto-image-transition {
+      transition: opacity 0.3s ease-out;
+    }
+  </style>
+</Layout>
+
+<script define:vars={{ initialData, moto, dealer }}>
+  // Handle financing button clicks
+  document.querySelectorAll("[data-financing-button]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const colors = JSON.parse(button.getAttribute("data-colors") || "[]");
+
+      if (colors.length === 1) {
+        // If there's only one color, redirect directly
+        const financingUrl = initialData.financingUrl;
+        const url = `${financingUrl}?codigoMoto=${moto.motorcycle_id_key}_${colors[0].color_id}`;
+
+        try {
+          if (window !== window.parent) {
+            window.parent.location.href = url;
+          } else {
+            window.location.href = url;
+          }
+        } catch (e) {
+          console.warn(
+            "No se pudo acceder a la ventana padre. Redirigiendo en la ventana actual."
+          );
+          window.location.href = url;
+        }
+      } else {
+        // Show color selection modal
+        window.showColorSelectionModal();
+      }
+    });
+  });
+
+  // Handle cash sales button clicks (if dealer allows cash sales)
+  document.querySelectorAll("[data-cash-sales-button]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const whatsappNumber = dealer.whatsapp_sales_number || "51912440103";
+      const message = encodeURIComponent(
+        `Hola, quisiera información sobre la compra al contado del modelo ${moto.modelo} ${moto.marca}.`
+      );
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
+
+      try {
+        if (window !== window.parent) {
+          window.parent.open(whatsappUrl, "_blank");
+        } else {
+          window.open(whatsappUrl, "_blank");
+        }
+      } catch (e) {
+        console.warn(
+          "No se pudo abrir WhatsApp. Redirigiendo en la ventana actual."
+        );
+        window.location.href = whatsappUrl;
+      }
+    });
+  });
+</script>

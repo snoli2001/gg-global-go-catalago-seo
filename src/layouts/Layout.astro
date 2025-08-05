@@ -9,6 +9,7 @@ interface Props {
   image?: string;
   canonicalURL?: string;
   type?: string;
+  showHeader?: boolean;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   image = "/imgs/og-image.jpg",
   canonicalURL = import.meta.env.PUBLIC_SITE_URL,
   type = "website",
+  showHeader = true,
 } = Astro.props;
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL;
@@ -89,7 +91,7 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL;
     </script>
   </head>
   <body class="bg-gray-50">
-    <Header client:load />
+    {showHeader && <Header client:load />}
     <div class="mt-20">
       <slot />
     </div>
