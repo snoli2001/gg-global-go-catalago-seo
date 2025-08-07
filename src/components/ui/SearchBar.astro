@@ -45,7 +45,7 @@ const { motos, placeholder = "Encuentra tu moto favorita", dealer } = Astro.prop
   </div>
 </div>
 
-<script define:vars={{ motos }}>
+<script define:vars={{ motos, dealer }}>
   // Función para obtener la imagen del banner
   function getBannerImage(moto) {
     const bannerImages = moto.carrusels.filter(
