@@ -10,6 +10,7 @@ import MobileDetails from "../../components/moto/MobileDetails.astro";
 import VideoSection from "../../components/moto/VideoSection.astro";
 import MotoScripts from "../../components/moto/MotoScripts.astro";
 import ColorSelectionModal from "../../components/moto/ColorSelectionModal.astro";
+import Header from "../../components/Header";
 
 export const prerender = true;
 
@@ -237,6 +238,7 @@ const breadcrumbData = {
     data-moto-code={moto.code}
     data-financing-url={import.meta.env.PUBLIC_FINANCING_URL}
   >
+    <Header client:load />
     <MotoHeader
       moto={moto}
       bannerImages={bannerImages}
